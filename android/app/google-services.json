@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "678632726327",
+    "project_id": "mafia-meeting-9705b",
+    "storage_bucket": "mafia-meeting-9705b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678632726327:android:68a828a234faa104a804b2",
+        "android_client_info": {
+          "package_name": "com.example.mafia_meeting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgZ_w-d995eOy3QB0oBFpGnvpMOjQLhSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678632726327:android:86f31f7029c0f29aa804b2",
+        "android_client_info": {
+          "package_name": "com.example.mafiameeting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgZ_w-d995eOy3QB0oBFpGnvpMOjQLhSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
