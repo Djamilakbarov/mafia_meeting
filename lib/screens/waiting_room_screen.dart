@@ -1,9 +1,9 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'game_screen.dart';
-import '../models/player_model.dart'; // Убедись, что путь правильный
+// Убедись, что путь правильный
+import '../models/role_enum.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
   final String roomCode;
@@ -20,6 +20,8 @@ class WaitingRoomScreen extends StatefulWidget {
 }
 
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
+  int _discussionTime = 120;
+
   late Stream<DocumentSnapshot<Map<String, dynamic>>> _roomStream;
 
   @override
@@ -32,7 +34,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   }
 
   void _startGame(List<String> players) async {
-    final random = Random();
     List<Role> roles = _generateRoles(players.length);
     roles.shuffle();
 
@@ -137,6 +138,25 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 16),
+              Text('⏱ Выберите время обсуждения:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              DropdownButton<int>(
+                value: _discussionTime,
+                items: [120, 180, 240]
+                    .map((int value) => DropdownMenuItem<int>(
+                          value: value,
+                          child: Text('$value секунд'),
+                        ))
+                    .toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _discussionTime = newValue;
+                    });
+                  }
+                },
+              ),
               const SizedBox(height: 20),
               Text("${loc.roomCode}: ${widget.roomCode}",
                   style: const TextStyle(

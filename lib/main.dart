@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/lobby_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MafiaMeetingApp());
 }
 
@@ -59,16 +62,16 @@ class _MafiaMeetingAppState extends State<MafiaMeetingApp> {
     return MaterialApp(
       title: 'Mafia Meeting',
       locale: _locale,
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ru'),
-        Locale('az'),
-      ],
       localizationsDelegates: const [
         AppLocalizations.delegate, // 🔥 ДОБАВЛЕНО
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ru'),
+        Locale('az'),
       ],
       theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
       debugShowCheckedModeBanner: false,

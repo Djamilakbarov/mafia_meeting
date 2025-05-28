@@ -27,5 +27,11 @@
   "invalidRoomCode": "Invalid room code",
   "error": "Error",
   "ok": "OK",
-  "leave": "Leave"
+  "leave": "Leave",
+  "darkTheme": "Dark Theme",
+  "language": "Language",
+  "langRu": "Russian",
+  "langEn": "English",
+  "langAz": "Azerbaijani"
+
 }

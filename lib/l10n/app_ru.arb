@@ -27,5 +27,10 @@
   "invalidRoomCode": "Неверный код комнаты",
   "error": "Ошибка",
   "ok": "ОК",
-  "leave": "Выйти"
+  "leave": "Выйти",
+  "darkTheme": "Тёмная тема",
+  "language": "Язык",
+  "langRu": "Russian",
+  "langEn": "English",
+  "langAz": "Azerbaijani"
 }

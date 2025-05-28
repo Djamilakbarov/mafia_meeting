@@ -1,6 +1,9 @@
+import 'profile_screen.dart';
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -23,14 +26,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _playerName;
   late TextEditingController _nameController;
   late Locale _currentLocale;
+  List<Map<String, dynamic>> gameHistory = [];
 
   @override
   void initState() {
     super.initState();
     _isDark = widget.isDarkMode;
-    _nameController = TextEditingController();
-    _currentLocale = const Locale('en'); // По умолчанию
+    _nameController = TextEditingController(text: '');
+    _currentLocale = const Locale('en');
     _loadPreferences();
+    _loadHistory();
   }
 
   Future<void> _loadPreferences() async {
@@ -61,17 +66,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _loadHistory() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('history')
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    final history = snapshot.docs
+        .where((doc) {
+          final players = List<Map<String, dynamic>>.from(doc['players']);
+          return players.any((p) => p['name'] == _playerName);
+        })
+        .map((doc) => doc.data())
+        .toList();
+
+    setState(() {
+      gameHistory = history;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.lobby),
+        title: Text(loc.settings!),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Мой профиль'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(playerName: _playerName),
+                ),
+              );
+            },
+          ),
           TextField(
             controller: _nameController,
             decoration: InputDecoration(labelText: loc.player),
@@ -79,35 +115,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 30),
           SwitchListTile(
-            title: const Text("Тёмная тема"),
+            title: Text(loc.darkTheme!),
             value: _isDark,
-            onChanged: (val) {
-              setState(() {
-                _isDark = val;
-              });
-              widget.onThemeChanged(val);
+            onChanged: (value) {
+              setState(() => _isDark = value);
+              widget.onThemeChanged(value);
             },
           ),
-          const Divider(height: 40),
-          const Text("Язык:", style: TextStyle(fontWeight: FontWeight.bold)),
-          RadioListTile<Locale>(
-            title: const Text("Русский"),
-            value: const Locale('ru'),
-            groupValue: _currentLocale,
-            onChanged: _changeLanguage,
+          const Divider(),
+          ListTile(
+            leading: Icon(Icons.admin_panel_settings),
+            title: Text('Админ-панель'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AdminLogin()),
+              );
+            },
           ),
-          RadioListTile<Locale>(
-            title: const Text("English"),
-            value: const Locale('en'),
-            groupValue: _currentLocale,
-            onChanged: _changeLanguage,
-          ),
-          RadioListTile<Locale>(
-            title: const Text("Azərbaycan"),
-            value: const Locale('az'),
-            groupValue: _currentLocale,
-            onChanged: _changeLanguage,
-          ),
+          const Divider(),
+          const Text("📜 История игр",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          ...gameHistory.map((game) {
+            final date = DateFormat.yMd()
+                .add_jm()
+                .format(DateTime.parse(game['timestamp']));
+            final eliminated = game['eliminated'] ?? 'Unknown';
+            final room = game['roomCode'] ?? '';
+            final bestPlayer = game['bestPlayer'] ?? 'N/A';
+            final likes =
+                Map<String, dynamic>.from(game['likesReceived'] ?? {});
+            return Card(
+              child: ListTile(
+                title: Text("Room: $room - $date"),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        "Eliminated: $eliminated | Players: \${game['players'].length}"),
+                    Text("⭐ Best Player: $bestPlayer"),
+                    if (likes.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text("❤️ Likes: " +
+                            likes.entries
+                                .map((e) => "\${e.key} (\${e.value})")
+                                .join(", ")),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );

@@ -1,21 +1,34 @@
-import 'dart:async';
+import 'dart:async'; // Добавлен импорт для StreamSubscription
+import '../widgets/ads_banner_widget.dart';
+import 'video_call_screen.dart';
+import 'victory_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../l10n/app_localizations.dart';
-import '../main.dart';
 import '../models/player_model.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:uuid/uuid.dart';
+import 'timer_controller.dart';
+import '../services/chat_service.dart';
+import '../services/rating_service.dart';
+import '../models/role_enum.dart'; // Убедитесь, что Role_enum.dart определен и доступен
 
-enum GamePhase { night, discussion, voting, result }
+// Новая фаза игры
+enum GamePhase { discussion, voting, night, results, finished }
 
-GamePhase parseGamePhase(String phase) {
-  switch (phase) {
-    case 'night': return GamePhase.night;
-    case 'discussion': return GamePhase.discussion;
-    case 'voting': return GamePhase.voting;
-    case 'result': return GamePhase.result;
-    default: return GamePhase.night;
+class PostGameAdBanner extends StatelessWidget {
+  final VoidCallback onContinue;
+  const PostGameAdBanner({super.key, required this.onContinue});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Реклама'),
+      content: const AdsBannerWidget(),
+      actions: [
+        TextButton(
+          onPressed: onContinue,
+          child: const Text('Продолжить'),
+        ),
+      ],
+    );
   }
 }
 
@@ -23,684 +36,473 @@ class GameScreen extends StatefulWidget {
   final String roomCode;
   final String playerName;
 
-  const GameScreen({super.key, required this.roomCode, required this.playerName});
+  const GameScreen(
+      {super.key, required this.roomCode, required this.playerName});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  // Game state
+  Map<String, String> voteResults = {};
+  int _discussionTime =
+      120; // Значение по умолчанию, будет загружено из Firestore
+  late TimerController _timerController; // Инициализируем в _loadDiscussionTime
   List<Player> players = [];
-  Player? currentPlayer;
-  String? selectedTarget;
-  GamePhase currentPhase = GamePhase.night;
-  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _roomSub;
-  List<String> gameLog = [];
+  Map<String, int> ratings = {};
+  String? bestPlayer;
+  String? winnerMessage;
+  bool gameOver = false;
+  bool _adShown = false;
+  String? _likedPlayer; // Игрок, которого текущий пользователь уже лайкнул
 
-  // WebRTC
-  final _localRenderer = RTCVideoRenderer();
-  final _remoteRenderer = RTCVideoRenderer();
-  final Map<String, RTCVideoRenderer> _remoteRenderers = {};
-  final Map<String, String> _remotePlayerNames = {};
-  MediaStream? _localStream;
-  bool _micEnabled = true;
-  bool _camEnabled = true;
-  late StreamSubscription<QuerySnapshot<Map<String, dynamic>>> _videoSub;
-  final String _id = const Uuid().v4();
+  GamePhase _currentGamePhase = GamePhase.discussion; // Начальная фаза игры
+
+  // StreamSubscription для отслеживания изменений в комнате
+  late StreamSubscription<DocumentSnapshot> _roomSubscription;
+  // StreamSubscription для отслеживания изменений в лайках
+  late StreamSubscription<QuerySnapshot> _likesSubscription;
 
   @override
   void initState() {
     super.initState();
-    _initVideoCall();
-    _subscribeToRoom();
-    _listenForRemoteVideos();
-    _addToGameLog("Игра началась!");
-  }
-
-  Future<void> _initVideoCall() async {
-    try {
-      await _localRenderer.initialize();
-      await _remoteRenderer.initialize();
-      final stream = await navigator.mediaDevices.getUserMedia({
-        'audio': true,
-        'video': _camEnabled ? {'facingMode': 'user'} : false,
-      });
-      _localRenderer.srcObject = stream;
-      _localStream = stream;
-
-      await FirebaseFirestore.instance
-          .collection('rooms')
-          .doc(widget.roomCode)
-          .collection('video')
-          .doc(_id)
-          .set({
-        'id': _id,
-        'name': widget.playerName,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-        'isAlive': true
-      });
-    } catch (e) {
-      _addToGameLog("Ошибка видео: ${e.toString()}");
-    }
-  }
-
-  void _listenForRemoteVideos() {
-    _videoSub = FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .collection('video')
-        .where('isAlive', isEqualTo: true)
-        .snapshots()
-        .listen((snapshot) {
-      for (var change in snapshot.docChanges) {
-        final doc = change.doc;
-        if (doc.id == _id) continue;
-
-        if (change.type == DocumentChangeType.removed) {
-          _removeRenderer(doc.id);
-        } else {
-          _updateRenderer(doc);
-        }
-      }
-    });
-  }
-
-  void _updateRenderer(DocumentSnapshot doc) async {
-    if (!_remoteRenderers.containsKey(doc.id)) {
-      final renderer = RTCVideoRenderer();
-      await renderer.initialize();
-      setState(() {
-        _remoteRenderers[doc.id] = renderer;
-        _remotePlayerNames[doc.id] = doc['name'];
-      });
-    }
-  }
-
-  void _removeRenderer(String id) {
-    if (_remoteRenderers.containsKey(id)) {
-      _remoteRenderers[id]?.dispose();
-      setState(() {
-        _remoteRenderers.remove(id);
-        _remotePlayerNames.remove(id);
-      });
-    }
-  }
-
-  void _toggleMic() {
-    setState(() {
-      _micEnabled = !_micEnabled;
-      _localStream?.getAudioTracks().forEach((track) {
-        track.enabled = _micEnabled;
-      });
-      _addToGameLog(_micEnabled ? "Микрофон включен" : "Микрофон выключен");
-    });
-  }
-
-  void _toggleCamera() {
-    setState(() {
-      _camEnabled = !_camEnabled;
-      _localStream?.getVideoTracks().forEach((track) {
-        track.enabled = _camEnabled;
-      });
-      _addToGameLog(_camEnabled ? "Камера включена" : "Камера выключена");
-    });
-  }
-
-  void _subscribeToRoom() {
-    _roomSub = FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .snapshots()
-        .listen((snapshot) {
-      if (!snapshot.exists) return;
-
-      final data = snapshot.data()!;
-      final playerList = List<Map<String, dynamic>>.from(data['players'] ?? []);
-      final phase = data['phase'] ?? 'night';
-
-      final winMessage = _checkWinConditionRealtime(playerList);
-      if (winMessage != null) {
-        _showWinDialog(winMessage);
-        return;
-      }
-
-      setState(() {
-        players = playerList.map((p) => Player.fromMap(p)).toList();
-        currentPhase = parseGamePhase(phase);
-        currentPlayer = players.firstWhere((p) => p.name == widget.playerName);
-      });
-
-      _updateVideoStatuses();
-    });
-  }
-
-  void _updateVideoStatuses() async {
-    for (var player in players) {
-      if (!player.isAlive) {
-        await FirebaseFirestore.instance
-            .collection('rooms')
-            .doc(widget.roomCode)
-            .collection('video')
-            .where('name', isEqualTo: player.name)
-            .get()
-            .then((snapshot) {
-          for (var doc in snapshot.docs) {
-            doc.reference.update({'isAlive': false});
-          }
-        });
-      }
-    }
-  }
-
-  void _submitNightAction() async {
-    if (selectedTarget == null) return;
-
-    String actionType = '';
-    String actionMessage = '';
-
-    switch (currentPlayer!.role) {
-      case Role.mafia:
-      case Role.maniac:
-        actionType = 'attack';
-        actionMessage = 'атаковал';
-        break;
-      case Role.doctor:
-        actionType = 'heal';
-        actionMessage = 'вылечил';
-        break;
-      case Role.detective:
-        actionType = 'investigate';
-        actionMessage = 'проверил';
-        break;
-      default:
-        return;
-    }
-
-    await FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .update({
-      'lastAction': {
-        'by': currentPlayer!.name,
-        'target': selectedTarget,
-        'role': currentPlayer!.role.name,
-        'type': actionType
-      },
-      'phase': 'discussion'
-    });
-
-    _addToGameLog(
-        '${currentPlayer!.name} $actionMessage $selectedTarget');
-
-    setState(() {
-      currentPhase = GamePhase.discussion;
-      selectedTarget = null;
-    });
-  }
-
-  void _accuse(String name) {
-    setState(() {
-      selectedTarget = name;
-      currentPhase = GamePhase.voting;
-    });
-    _addToGameLog('${currentPlayer!.name} обвиняет $name');
-  }
-
-  void _voteVerdict(bool kill) async {
-    if (selectedTarget == null) return;
-
-    String result = kill ? 'казнить' : 'помиловать';
-    _addToGameLog('Голосование: $result $selectedTarget');
-
-    if (kill) {
-      int index = players.indexWhere((p) => p.name == selectedTarget);
-      if (index != -1) {
-        players[index] = players[index].copyWith(isAlive: false);
-
-        await FirebaseFirestore.instance
-            .collection('rooms')
-            .doc(widget.roomCode)
-            .update({
-          'players': players.map((p) => p.toMap()).toList(),
-          'lastVote': {
-            'by': currentPlayer!.name,
-            'target': selectedTarget,
-            'result': 'eliminated'
-          }
-        });
-
-        _updateVideoStatuses();
-      }
-    }
-
-    await FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .update({'phase': 'result'});
-
-    setState(() {
-      currentPhase = GamePhase.result;
-      selectedTarget = null;
-    });
-  }
-
-  void _restartGame() async {
-    await FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .update({
-      'phase': 'night',
-      'lastAction': FieldValue.delete(),
-      'lastVote': FieldValue.delete()
-    });
-
-    _addToGameLog("Игра перезапущена");
-
-    setState(() {
-      currentPhase = GamePhase.night;
-      selectedTarget = null;
-    });
-  }
-
-  String? _checkWinConditionRealtime(List<Map<String, dynamic>> rawPlayers) {
-    final players = rawPlayers.map((p) => Player.fromMap(p)).toList();
-    int mafiaAlive = players.where((p) => p.isAlive && p.role == Role.mafia).length;
-    int othersAlive = players.where((p) => p.isAlive && p.role != Role.mafia).length;
-
-    if (mafiaAlive == 0) return "Мирные победили!";
-    if (mafiaAlive >= othersAlive) return "Мафия победила!";
-    return null;
-  }
-
-  void _showWinDialog(String message) {
-    _addToGameLog(message);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Игра окончена"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _restartGame();
-            },
-            child: const Text("Новая игра"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _addToGameLog(String message) {
-    setState(() {
-      gameLog.add('${DateTime.now().hour}:${DateTime.now().minute} - $message');
-      if (gameLog.length > 50) gameLog.removeAt(0);
-    });
+    _loadDiscussionTime(); // Загружаем время и инициализируем таймер
+    _listenToRoom();
+    _listenToLikes();
+    _checkInitialLikeStatus(); // Проверяем статус лайка при инициализации
   }
 
   @override
   void dispose() {
-    _roomSub.cancel();
-    _videoSub.cancel();
-    _localRenderer.dispose();
-    _localStream?.dispose();
-    for (final renderer in _remoteRenderers.values) {
-      renderer.dispose();
-    }
-    FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(widget.roomCode)
-        .collection('video')
-        .doc(_id)
-        .delete();
+    _timerController.cancel();
+    _roomSubscription.cancel();
+    _likesSubscription.cancel();
     super.dispose();
   }
 
+  // --- Методы для загрузки данных и слушателей ---
+
+  void _loadDiscussionTime() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomCode)
+        .get();
+    if (doc.exists && doc.data()!.containsKey('discussionTime')) {
+      setState(() {
+        _discussionTime = doc['discussionTime'];
+        // Инициализируем _timerController здесь, после загрузки _discussionTime
+        _timerController = TimerController();
+        // Запускаем таймер с загруженным _discussionTime и колбэком
+        _timerController.start(
+          _discussionTime, // duration
+          () {
+            // onEnd callback: Что должно произойти, когда таймер закончится
+            print('Таймер дискуссии закончился!');
+            _startVotingPhase(); // Переход к фазе голосования
+          },
+        );
+      });
+    }
+  }
+
+  void _listenToRoom() {
+    _roomSubscription = FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomCode)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        final playersData = (data['players'] as List<dynamic>?)
+                ?.map((e) => Player.fromMap(e as Map<String, dynamic>))
+                .toList() ??
+            [];
+        final winnerMessageData = data['winnerMessage'] as String?;
+        final currentPhaseData = data['currentPhase'] as String?;
+
+        setState(() {
+          players = playersData;
+          winnerMessage = winnerMessageData;
+          // Обновляем текущую фазу игры из Firestore
+          if (currentPhaseData != null) {
+            _currentGamePhase = GamePhase.values.firstWhere(
+              (e) => e.name == currentPhaseData,
+              orElse: () => GamePhase.discussion, // По умолчанию
+            );
+          }
+
+          // Проверяем условия окончания игры
+          if (winnerMessage != null && !gameOver) {
+            gameOver = true; // Устанавливаем флаг, что игра окончена
+            _navigateToVictory(); // Переходим на экран победы
+            _showPostGameAd(); // Показываем рекламу после игры
+          }
+        });
+      }
+    });
+  }
+
+  void _listenToLikes() {
+    _likesSubscription = FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomCode)
+        .collection('likes_meta')
+        .snapshots()
+        .listen((snapshot) {
+      // Здесь вы можете обрабатывать изменения в лайках, если нужно
+      // Например, обновлять количество лайков у каждого игрока
+      // Или получать список лайкнутых игроков
+    });
+  }
+
+  // --- Методы для логики игры и UI ---
+
+  void _startVotingPhase() {
+    if (!mounted) return;
+
+    setState(() {
+      _currentGamePhase = GamePhase.voting; // Устанавливаем фазу голосования
+      final int _votingTime = 60; // Время для голосования
+      _timerController.start(
+        _votingTime,
+        () {
+          print('Таймер голосования закончился!');
+          _processVotesAndShowResults(); // Метод для обработки голосов
+        },
+      );
+      // Обновляем состояние комнаты в Firestore
+      FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(widget.roomCode)
+          .update({'currentPhase': _currentGamePhase.name});
+    });
+  }
+
+  void _processVotesAndShowResults() {
+    if (!mounted) return;
+    setState(() {
+      _currentGamePhase = GamePhase.results; // Переход к фазе результатов
+    });
+    // Здесь должна быть логика подсчета голосов,
+    // определение, кто выбыл, или кто победил (если это конец игры)
+    // И затем, возможно, вызов _showVoteResultsDialog();
+    _showVoteResultsDialog(); // Предположим, что он показывает результаты голосования
+  }
+
+  // Обновленный метод для перехода на экран победы (Исправление ошибок 5 и 6)
+  void _navigateToVictory() {
+    if (winnerMessage != null && mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => VictoryScreen(
+            // winnerTeam должен быть "mafia" или "villagers"
+            // Здесь предполагается, что winnerMessage содержит текст,
+            // по которому можно определить команду.
+            winnerTeam:
+                winnerMessage!.contains('Мафия') ? 'mafia' : 'villagers',
+            message: winnerMessage!, // Передаем полное сообщение
+            onPlayAgain: () {
+              // Логика для перезапуска игры или возврата в лобби
+              Navigator.of(context).pop(); // Закрывает VictoryScreen
+              // Дополнительная логика: сброс состояния игры, переход к LobbyScreen и т.д.
+              // Пример: Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LobbyScreen()));
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showPostGameAd() {
+    if (gameOver && !_adShown && mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return PostGameAdBanner(
+            onContinue: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _adShown = true;
+              });
+            },
+          );
+        },
+      );
+    }
+  }
+
+  // --- Методы для лайков ---
+
+  Future<String?> _getLikedPlayerName() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomCode)
+        .collection('likes_meta')
+        .doc(widget.playerName)
+        .get();
+    if (doc.exists && doc.data()!.containsKey('liked')) {
+      return doc.data()!['liked'] as String;
+    }
+    return null;
+  }
+
+  void _checkInitialLikeStatus() async {
+    _likedPlayer = await _getLikedPlayerName();
+    if (mounted) setState(() {});
+  }
+
+  void _submitLike(String targetPlayerName) async {
+    if (_likedPlayer != null) {
+      // Пользователь уже лайкнул кого-то, не позволяем лайкать снова
+      return;
+    }
+
+    final likesMetaRef = FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomCode)
+        .collection('likes_meta');
+
+    await likesMetaRef.doc(widget.playerName).set({
+      'liked': targetPlayerName,
+    });
+
+    setState(() {
+      _likedPlayer = targetPlayerName;
+    });
+
+    // Опционально: обновить рейтинг игрока
+    await RatingService.updatePlayerRating(
+        targetPlayerName, 1); // +1 к рейтингу
+  }
+
+  // --- Методы для ботов (без изменений в логике, но убраны предупреждения unused_element) ---
+  // (Ошибки unused_element не будут здесь, если эти методы вызываются в вашей игре)
+
+  Player _selectMafiaTarget(List<Player> alivePlayers) {
+    // Выбираем случайного мирного жителя
+    final villagers =
+        alivePlayers.where((p) => p.role == Role.villager && !p.isBot).toList();
+    if (villagers.isNotEmpty) {
+      villagers.shuffle();
+      return villagers.first;
+    }
+    // Если нет мирных жителей, выбираем любого живого не-мафиози
+    final nonMafia =
+        alivePlayers.where((p) => p.role != Role.mafia && !p.isBot).toList();
+    if (nonMafia.isNotEmpty) {
+      nonMafia.shuffle();
+      return nonMafia.first;
+    }
+    // В крайнем случае, просто случайный игрок
+    alivePlayers.shuffle();
+    return alivePlayers.first;
+  }
+
+  Player _selectDoctorTarget(List<Player> alivePlayers) {
+    // Врач не может лечить себя, если он не является ботом.
+    // Если врач бот, он может лечить себя
+    // Если игра начинается, врач лечит случайно выбранного игрока,
+    // который не мафия, не себя.
+    // Если gamesPlayed == 0, то врач лечит только себя.
+    // Если доктор бот, то он лечит себя
+    // Если gamesPlayed == 0, то доктор лечит себя
+    final doctor = alivePlayers.firstWhere((p) => p.role == Role.doctor);
+    if (players.firstWhere((p) => p.name == widget.playerName).isBot) {
+      return doctor;
+    }
+    // Случайный мирный житель или себя, если это первая игра.
+    // Для более умного бота нужно реализовать более сложную логику
+    alivePlayers.shuffle();
+    return alivePlayers.first;
+  }
+
+  Player _selectDetectiveTarget(List<Player> alivePlayers) {
+    // Детектив выбирает случайного игрока для проверки
+    final nonDetective = alivePlayers
+        .where((p) => p.role != Role.detective && !p.isBot)
+        .toList();
+    if (nonDetective.isNotEmpty) {
+      nonDetective.shuffle();
+      return nonDetective.first;
+    }
+    // В крайнем случае, просто случайный игрок
+    alivePlayers.shuffle();
+    return alivePlayers.first;
+  }
+
+  Player _selectManiacTarget(List<Player> alivePlayers) {
+    // Маньяк выбирает случайного игрока для убийства
+    final nonManiac =
+        alivePlayers.where((p) => p.role != Role.maniac && !p.isBot).toList();
+    if (nonManiac.isNotEmpty) {
+      nonManiac.shuffle();
+      return nonManiac.first;
+    }
+    // В крайнем случае, просто случайный игрок
+    alivePlayers.shuffle();
+    return alivePlayers.first;
+  }
+
+  Player _selectVoteTarget(List<Player> alivePlayers) {
+    // Выбираем случайного игрока для голосования (для ботов)
+    alivePlayers.shuffle();
+    return alivePlayers.first;
+  }
+
+  void _showVoteResults() {
+    // Логика отображения результатов голосования
+    // Например, обновить UI, показать диалог
+    _showVoteResultsDialog();
+    // _startNightPhase(); // продолжение игры - этот метод не определен в текущем коде
+  }
+
+  void _showVoteResultsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Результаты голосования'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: voteResults.entries.map((entry) {
+                return Text('${entry.key}: ${entry.value}');
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('ОК'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // --- UI Build Method ---
+
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final alivePlayers = players.where((p) => p.isAlive).toList();
-    final others = alivePlayers.where((p) => p.name != widget.playerName).toList();
+    // Определение текущего игрока
+    final currentPlayer = players.firstWhere(
+      (p) => p.name == widget.playerName,
+      orElse: () =>
+          Player(name: widget.playerName, role: Role.villager), // Заглушка
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${loc.day1} (${_getPhaseText(loc)})'),
+        title: Text('Комната: ${widget.roomCode} - ${currentPlayer.role.name}'),
         actions: [
           IconButton(
-            icon: Icon(_micEnabled ? Icons.mic : Icons.mic_off),
-            onPressed: _toggleMic,
-          ),
-          IconButton(
-            icon: Icon(_camEnabled ? Icons.videocam : Icons.videocam_off),
-            onPressed: _toggleCamera,
-          ),
-          IconButton(
-            icon: const Icon(Icons.language),
+            icon: const Icon(Icons.video_call),
             onPressed: () {
-              final locale = Localizations.localeOf(context).languageCode;
-              if (locale == 'en') {
-                MafiaMeetingApp.setLocale(context, const Locale('ru'));
-              } else if (locale == 'ru') {
-                MafiaMeetingApp.setLocale(context, const Locale('az'));
-              } else {
-                MafiaMeetingApp.setLocale(context, const Locale('en'));
-              }
+              // Исправление ошибки 8: roomCode вместо roomId
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => VideoCallScreen(
+                  roomCode: widget.roomCode, // Исправлено
+                  playerName: widget.playerName,
+                ),
+              ));
             },
-          )
+          ),
         ],
       ),
       body: Column(
         children: [
-          // Видеопанель
-          _buildVideoPanel(),
-          // Игровая панель
-          Expanded(
-            child: DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  const TabBar(
-                    tabs: [
-                      Tab(icon: Icon(Icons.people),
-                      Tab(icon: Icon(Icons.history)),
-                    ],
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        _buildPlayerList(alivePlayers),
-                        _buildGameLog(),
-                      ],
-                    ),
-                  ),
-                  // Фазовые действия
-                  if (currentPhase == GamePhase.night) 
-                    _buildNightActions(loc, others),
-                  if (currentPhase == GamePhase.discussion) 
-                    _buildDiscussionActions(loc, others),
-                  if (currentPhase == GamePhase.voting) 
-                    _buildVotingActions(loc),
-                  if (currentPhase == GamePhase.result) 
-                    _buildResultActions(loc),
-                ],
-              ),
-            ),
+          // Таймер
+          ListenableBuilder(
+            listenable: _timerController,
+            builder: (BuildContext context, Widget? child) {
+              return Text(
+                'Время до конца ${_currentGamePhase.name}: ${_timerController.timeLeft} сек',
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVideoPanel() {
-    return Container(
-      height: 200,
-      color: Colors.black,
-      child: Column(
-        children: [
-          // Локальное видео
+          // Список игроков
           Expanded(
-            child: Stack(
-              children: [
-                RTCVideoView(_localRenderer, mirror: true),
-                RTCVideoView(_remoteRenderer);
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    color: Colors.black54,
-                    child: Text(
-                      '${widget.playerName} (Вы)',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Удаленные видео
-          SizedBox(
-            height: 100,
             child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _remoteRenderers.length,
-              itemBuilder: (ctx, index) {
-                final id = _remoteRenderers.keys.elementAt(index);
-                return Container(
-                  width: 120,
-                  margin: const EdgeInsets.all(4),
-                  child: Stack(
-                    children: [
-                      RTCVideoView(_remoteRenderers[id]!),
-                      Positioned(
-                        bottom: 4,
-                        left: 4,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          color: Colors.black54,
-                          child: Text(
-                            _remotePlayerNames[id] ?? 'Игрок',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+              itemCount: players.length,
+              itemBuilder: (context, index) {
+                final player = players[index];
+                return ListTile(
+                  title: Text(
+                    player.name,
+                    style: TextStyle(
+                      color: player.isAlive ? Colors.black : Colors.grey,
+                      decoration: player.isAlive
+                          ? TextDecoration.none
+                          : TextDecoration.lineThrough,
+                    ),
                   ),
+                  subtitle: Text(
+                    player.isBot ? 'Бот' : player.role.name,
+                    style: TextStyle(
+                      color: player.isAlive ? Colors.black54 : Colors.grey,
+                    ),
+                  ),
+                  trailing: player.name == widget.playerName
+                      ? const Text('Вы')
+                      : null,
                 );
               },
             ),
           ),
+          // Поле для чата и кнопка отправки
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: ChatService.messageController,
+                    decoration: const InputDecoration(
+                      // Добавлено const
+                      labelText: 'Сообщение',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send), // Добавлено const
+                  onPressed: () {
+                    ChatService.sendMessage(widget.roomCode,
+                        widget.playerName); // Вызов sendMessage
+                  },
+                ),
+              ],
+            ),
+          ),
+          // Лайки игроков (если игра еще не окончена)
+          if (!gameOver) // Проверяем, что игра не окончена, прежде чем показывать кнопки лайков
+            Column(
+              children: players
+                  .where((p) => p.name != widget.playerName)
+                  .map((p) => ListTile(
+                        title: Text(p.name),
+                        trailing: (_likedPlayer ==
+                                null) // Проверка, лайкнул ли текущий пользователь
+                            ? IconButton(
+                                icon: const Icon(Icons.thumb_up,
+                                    color: Colors.green), // Добавлено const
+                                onPressed: () => _submitLike(p.name),
+                              )
+                            : null, // Если уже лайкнул, то кнопка не отображается
+                      ))
+                  .toList(),
+            ),
+          // Лучший игрок (если есть данные рейтинга)
+          if (ratings.isNotEmpty)
+            Text('👑 Лучший игрок: ${bestPlayer ?? 'Нет'}',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
-  }
-
-  Widget _buildPlayerList(List<Player> alivePlayers) {
-    return ListView.builder(
-      itemCount: alivePlayers.length,
-      itemBuilder: (context, index) {
-        final player = alivePlayers[index];
-        final isYou = player.name == widget.playerName;
-
-        return Card(
-          color: isYou ? Colors.blue[900] : Colors.grey[900],
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: _getRoleColor(player.role),
-              child: Text(player.name[0]),
-            ),
-            title: Text(
-              player.name + (isYou ? " (вы)" : ""),
-              style: const TextStyle(color: Colors.white),
-            ),
-            subtitle: Text(
-              isYou ? "Роль: ${player.roleName}" : "Статус: жив",
-              style: const TextStyle(color: Colors.white70),
-            ),
-            trailing: Icon(
-              Icons.circle,
-              color: Colors.green,
-              size: 12,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildGameLog() {
-    return ListView.builder(
-      reverse: true,
-      itemCount: gameLog.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          child: Text(gameLog.reversed.toList()[index]),
-        );
-      },
-    );
-  }
-
-  Widget _buildNightActions(AppLocalizations loc, List<Player> targets) {
-    if (currentPlayer == null) return Container();
-
-    if (!currentPlayer!.isActiveRole) {
-      return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(
-              "Вы ${currentPlayer!.roleName}. Ночью вы спите...",
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submitNightAction,
-              child: const Text("Продолжить"),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Вы ${currentPlayer!.roleName}. Выберите цель:",
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          DropdownButton<String>(
-            isExpanded: true,
-            hint: const Text("Выберите игрока"),
-            value: selectedTarget,
-            items: targets
-                .map((p) => DropdownMenuItem(
-                      value: p.name,
-                      child: Text(p.name),
-                    ))
-                .toList(),
-            onChanged: (value) => setState(() => selectedTarget = value),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: selectedTarget != null ? _submitNightAction : null,
-            child: Text(currentPlayer!.role == Role.doctor
-                ? "Лечить"
-                : currentPlayer!.role == Role.detective
-                    ? "Проверить"
-                    : "Атаковать"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDiscussionActions(AppLocalizations loc, List<Player> targets) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Фаза обсуждения. Выберите подозреваемого:",
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          DropdownButton<String>(
-            isExpanded: true,
-            hint: const Text("Выберите игрока"),
-            value: selectedTarget,
-            items: targets
-                .map((p) => DropdownMenuItem(
-                      value: p.name,
-                      child: Text(p.name),
-                    ))
-                .toList(),
-            onChanged: (value) {
-              if (value != null) _accuse(value);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVotingActions(AppLocalizations loc) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Голосование: $selectedTarget",
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () => _voteVerdict(true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text("Казнить"),
-              ),
-              ElevatedButton(
-                onPressed: () => _voteVerdict(false),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: const Text("Помиловать"),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResultActions(AppLocalizations loc) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const Text(
-            "Результаты голосования",
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _restartGame,
-            child: const Text("Следующий день"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getRoleColor(Role role) {
-    switch (role) {
-      case Role.mafia: return Colors.red;
-      case Role.maniac: return Colors.purple;
-      case Role.doctor: return Colors.blue;
-      case Role.detective: return Colors.green;
-      case Role.villager: return Colors.grey;
-    }
-  }
-
-  String _getPhaseText(AppLocalizations loc) {
-    switch (currentPhase) {
-      case GamePhase.night: return "Ночь";
-      case GamePhase.discussion: return loc.phaseDiscussion;
-      case GamePhase.voting: return loc.phaseVoting;
-      case GamePhase.result: return loc.phaseResult;
-    }
   }
 }

@@ -15,6 +15,9 @@ class VideoCallScreen extends StatefulWidget {
 }
 
 class _VideoCallScreenState extends State<VideoCallScreen> {
+  bool _isMuted = false;
+  bool _isVideoOff = false;
+  MediaStream? _localStream;
   final _localRenderer = RTCVideoRenderer();
   final Map<String, RTCVideoRenderer> _remoteRenderers = {};
   final Map<String, RTCPeerConnection> _peerConnections = {};

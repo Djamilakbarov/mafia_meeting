@@ -27,5 +27,11 @@
   "invalidRoomCode": "Yanlış otaq kodu",
   "error": "Xəta",
   "ok": "OK",
-  "leave": "Çıx"
+  "leave": "Çıx",
+  "darkTheme": "Tünd Mövzu",
+  "language": "Dil",
+  "langRu": "Rusca",
+  "langEn": "Ingiliscə",
+  "langAz": "Azərbaycanca"
+
 }

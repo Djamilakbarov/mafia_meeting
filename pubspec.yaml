@@ -1,3 +1,4 @@
+
 name: mafia_meeting
 description: A new Flutter project.
 
@@ -19,7 +20,10 @@ dependencies:
   cloud_firestore: ^5.6.7
   flutter_webrtc: ^0.14.0
   uuid: ^4.1.0
-
+  audioplayers: ^5.2.0  # ✅ Добавлен пакет для звука
+  crypto: ^3.0.3
+  firebase_database: ^11.3.6
+  
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
@@ -28,8 +32,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
-  assets:
-    - lib/l10n/
+
+  assets:  # ✅ Добавлена секция assets
+    - assets/sounds/time_up.mp3
 
 l10n:
   arb-dir: lib/l10n

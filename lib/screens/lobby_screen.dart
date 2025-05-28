@@ -1,21 +1,14 @@
-import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/ads_banner_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../l10n/app_localizations.dart';
-import '../main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'game_screen.dart';
-import 'settings_screen.dart';
 
 class LobbyScreen extends StatefulWidget {
-  final void Function() toggleTheme;
+  final Function toggleTheme;
   final bool isDarkMode;
 
-  const LobbyScreen({
-    super.key,
-    required this.toggleTheme,
-    required this.isDarkMode,
-  });
+  const LobbyScreen(
+      {super.key, required this.toggleTheme, required this.isDarkMode});
 
   @override
   State<LobbyScreen> createState() => _LobbyScreenState();
@@ -23,273 +16,149 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   final TextEditingController _roomCodeController = TextEditingController();
-  late TextEditingController _nameController;
-  String? _roomCode;
-  String _playerName = "Player";
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController();
-    _loadPlayerName();
-  }
-
-  Future<void> _loadPlayerName() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedName = prefs.getString('playerName');
-    final generated = _generateRandomName();
-    setState(() {
-      _playerName = savedName ?? generated;
-      _nameController.text = _playerName;
-    });
-  }
-
-  Future<void> _savePlayerName(String name) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('playerName', name);
-  }
-
-  String _generateRandomName() {
-    final number = Random().nextInt(900) + 100;
-    return "Player$number";
-  }
-
-  String _generateRoomCode() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final rand = Random();
-    return List.generate(6, (_) => chars[rand.nextInt(chars.length)]).join();
-  }
+  final TextEditingController _playerNameController = TextEditingController();
+  int _nightDuration = 15;
+  int _discussionDuration = 30;
+  int _votingDuration = 20;
 
   Future<void> _createRoom() async {
-    final code = _generateRoomCode();
-    final roomRef = FirebaseFirestore.instance.collection('rooms').doc(code);
-    await roomRef.set({
-      'players': [_playerName],
-      'host': _playerName,
-      'started': false,
-    });
-    setState(() {
-      _roomCode = code;
-    });
-  }
+    final roomCode = _roomCodeController.text.trim();
+    final playerName = _playerNameController.text.trim();
 
-  Future<void> _joinRoom() async {
-    final code = _roomCodeController.text.trim().toUpperCase();
-    if (code.length != 6) {
-      _showError(AppLocalizations.of(context)!.invalidRoomCode);
-      return;
-    }
+    if (roomCode.isEmpty || playerName.isEmpty) return;
 
-    final roomRef = FirebaseFirestore.instance.collection('rooms').doc(code);
-    final snapshot = await roomRef.get();
-
-    if (!snapshot.exists) {
-      _showError(AppLocalizations.of(context)!.invalidRoomCode);
-      return;
-    }
-
-    await roomRef.update({
-      'players': FieldValue.arrayUnion([_playerName])
+    await FirebaseFirestore.instance.collection('rooms').doc(roomCode).set({
+      'gamePhase': 'night',
+      'nightActions': {},
+      'phaseResult': {},
+      'votes': {},
+      'roomSettings': {
+        'nightDuration': _nightDuration,
+        'discussionDuration': _discussionDuration,
+        'votingDuration': _votingDuration,
+      },
     });
 
-    setState(() {
-      _roomCode = code;
-    });
-  }
-
-  Future<void> _joinStaticRoom(String roomCode) async {
-    final roomRef =
-        FirebaseFirestore.instance.collection('rooms').doc(roomCode);
-    final snapshot = await roomRef.get();
-
-    if (!snapshot.exists) {
-      await roomRef.set({
-        'players': [_playerName],
-        'host': _playerName,
-        'started': false,
-      });
-    } else {
-      await roomRef.update({
-        'players': FieldValue.arrayUnion([_playerName])
-      });
-    }
-
-    setState(() {
-      _roomCode = roomCode;
-    });
-  }
-
-  Future<void> _leaveRoom() async {
-    if (_roomCode != null) {
-      final roomRef =
-          FirebaseFirestore.instance.collection('rooms').doc(_roomCode);
-      await roomRef.update({
-        'players': FieldValue.arrayRemove([_playerName])
-      });
-    }
-
-    setState(() {
-      _roomCode = null;
-    });
-  }
-
-  void _startGame() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => GameScreen(
-          roomCode: _roomCode!,
-          playerName: _playerName,
+        builder: (context) => GameScreen(
+          roomCode: roomCode,
+          playerName: playerName,
         ),
-      ),
-    );
-  }
-
-  void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.error),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.ok),
-          ),
-        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.lobby),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SettingsScreen(
-                    isDarkMode: widget.isDarkMode,
-                    onThemeChanged: (val) => widget.toggleTheme(),
-                    onLocaleChanged: (locale) =>
-                        MafiaMeetingApp.setLocale(context, locale),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => widget.toggleTheme(),
+        child: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: _roomCode == null
-            ? SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: "Ваше имя",
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        _playerName = value;
-                        _savePlayerName(value);
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _createRoom,
-                      child: Text(loc.createRoom),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _roomCodeController,
-                      decoration: InputDecoration(
-                        labelText: loc.roomCode,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _joinRoom,
-                      child: Text(loc.joinRoom),
-                    ),
-                    const SizedBox(height: 30),
-                    Divider(),
-                    const SizedBox(height: 10),
-                    Text("Стационарные комнаты",
-                        style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () => _joinStaticRoom("RUS001"),
-                      child: const Text("Комната для русскоязычных"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _joinStaticRoom("ENG001"),
-                      child: const Text("Room for English"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _joinStaticRoom("CHAT01"),
-                      child: const Text("Чайхана"),
-                    ),
-                  ],
+      appBar: AppBar(title: const Text('Создать комнату')),
+      body: Column(
+        children: const [
+          AdsBannerWidget(),
+        ],
+        mainAxisSize: MainAxisSize.min,
+        childrenOverflow: Overflow.visible,
+        children: [
+          // Вставка виджета баннера
+          AdsBannerWidget(),
+        ],
+        children:
+ Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+
+          const SizedBox(height: 24),
+          Text('Static Rooms', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          ElevatedButton.icon(
+            onPressed: () => _joinStaticRoom('russian_room'),
+            icon: Icon(Icons.people),
+            label: Text('🇷🇺 Русскоязычные'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => _joinStaticRoom('english_room'),
+            icon: Icon(Icons.people_outline),
+            label: Text('🇬🇧 English Room'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => _joinStaticRoom('chayhana_room'),
+            icon: Icon(Icons.emoji_food_beverage),
+            label: Text('🍵 Чайхана'),
+          ),
+                TextField(
+              controller: _roomCodeController,
+              decoration: const InputDecoration(labelText: 'Код комнаты'),
+            ),
+            TextField(
+              controller: _playerNameController,
+              decoration: const InputDecoration(labelText: 'Ваше имя'),
+            ),
+            const SizedBox(height: 20),
+            Text('⏱ Время фаз (в секундах)',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Ночь:'),
+                DropdownButton<int>(
+                  value: _nightDuration,
+                  items: [10, 15, 20, 30].map((int val) {
+                    return DropdownMenuItem<int>(
+                      value: val,
+                      child: Text('$val сек'),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => _nightDuration = val!),
                 ),
-              )
-            : StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('rooms')
-                    .doc(_roomCode)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final data = snapshot.data!.data() as Map<String, dynamic>?;
-                  final players = List<String>.from(data?['players'] ?? []);
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${loc.roomCode}: $_roomCode",
-                          style: const TextStyle(fontSize: 20)),
-                      const SizedBox(height: 20),
-                      Text(loc.players, style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 10),
-                      ...players
-                          .map((p) => ListTile(
-                                leading: const Icon(Icons.person),
-                                title: Text(p),
-                              ))
-                          .toList(),
-                      const Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _startGame,
-                            child: Text(loc.startGame),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey),
-                            onPressed: _leaveRoom,
-                            child: const Text("Выйти"),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Обсуждение:'),
+                DropdownButton<int>(
+                  value: _discussionDuration,
+                  items: [20, 30, 45, 60].map((int val) {
+                    return DropdownMenuItem<int>(
+                      value: val,
+                      child: Text('$val сек'),
+                    );
+                  }).toList(),
+                  onChanged: (val) =>
+                      setState(() => _discussionDuration = val!),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Голосование:'),
+                DropdownButton<int>(
+                  value: _votingDuration,
+                  items: [10, 15, 20, 30].map((int val) {
+                    return DropdownMenuItem<int>(
+                      value: val,
+                      child: Text('$val сек'),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => _votingDuration = val!),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _createRoom,
+              child: const Text('Создать и войти'),
+            ),
+          ],
+        ),
       ),
     );
   }
