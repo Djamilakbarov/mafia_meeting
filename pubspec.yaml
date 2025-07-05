@@ -1,4 +1,3 @@
-
 name: mafia_meeting
 description: A new Flutter project.
 
@@ -12,31 +11,46 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  firebase_core: ^3.13.0
-  firebase_auth: ^5.5.3
+  in_app_purchase: ^3.1.7
+  google_sign_in: ^6.2.1 
+  flutter_webrtc: ^0.14.1 
+  provider: ^6.1.5 
   shared_preferences: ^2.2.2
-  cloud_firestore: ^5.6.7
-  flutter_webrtc: ^0.14.0
-  uuid: ^4.1.0
-  audioplayers: ^5.2.0  # ✅ Добавлен пакет для звука
-  crypto: ^3.0.3
-  firebase_database: ^11.3.6
-  
-dev_dependencies:
-  flutter_lints: ^5.0.0
-  flutter_test:
+  firebase_core: ^3.14.0 
+  firebase_auth: ^5.6.0 
+  cloud_firestore: ^5.6.9 
+  google_mobile_ads: ^6.0.0 
+  geolocator: ^14.0.1 
+  geocoding: ^4.0.0 
+  firebase_database: ^11.3.7 
+  wakelock_plus: ^1.1.2  
+  image_picker: ^1.1.2 
+  firebase_storage: ^12.4.7
+  cached_network_image: ^3.3.1 
+  flutter_localizations:
     sdk: flutter
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/mafia_apk/images/
+    - assets/mafia_apk/sounds/
 
-  assets:  # ✅ Добавлена секция assets
-    - assets/sounds/time_up.mp3
+  fonts:
+    - family: Geometria
+      fonts:
+        - asset: assets/mafia_apk/fonts/Geometria.otf
+        - asset: assets/mafia_apk/fonts/Geometria-Bold.otf
+          weight: 900
+        - asset: assets/mafia_apk/fonts/Geometria-Medium.otf
+          weight: 600
+    - family: Headliner
+      fonts:
+        - asset: assets/mafia_apk/fonts/HeadlinerNo45.ttf
 
-l10n:
-  arb-dir: lib/l10n
-  template-arb-file: app_en.arb
-  output-localization-file: app_localizations.dart
+flutter_localizations: 
+  supported_locales:
+    - en
+    - ru
+    - az

@@ -1,12 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'admin_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdminGate extends StatefulWidget {
-  final String currentUser;
+  final String currentUserId;
 
-  const AdminGate({super.key, required this.currentUser});
+  const AdminGate({super.key, required this.currentUserId});
 
   @override
   State<AdminGate> createState() => _AdminGateState();
@@ -14,6 +14,7 @@ class AdminGate extends StatefulWidget {
 
 class _AdminGateState extends State<AdminGate> {
   bool? isAdmin;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -22,21 +23,46 @@ class _AdminGateState extends State<AdminGate> {
   }
 
   Future<void> _checkAdminStatus() async {
-    final doc = await FirebaseFirestore.instance
-        .collection('admins')
-        .doc(widget.currentUser)
-        .get();
+    final loc = AppLocalizations.of(context)!;
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('admins')
+          .doc(widget.currentUserId)
+          .get();
 
-    setState(() {
-      isAdmin = doc.exists;
-    });
+      if (mounted) {
+        setState(() {
+          isAdmin = doc.exists;
+          _errorMessage = null;
+        });
+      }
+    } catch (e) {
+      print("Ошибка при проверке статуса админа: $e");
+      if (mounted) {
+        setState(() {
+          isAdmin = false;
+          _errorMessage = loc.adminCheckError;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     if (isAdmin == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(loc.checkingAdminStatus),
+            ],
+          ),
+        ),
       );
     }
 
@@ -45,9 +71,19 @@ class _AdminGateState extends State<AdminGate> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Админ-доступ')),
-      body: const Center(
-        child: Text('⛔ У вас нет доступа к админ-панели'),
+      appBar: AppBar(title: Text(loc.adminAccess)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _errorMessage ?? loc.noAdminAccess,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, color: Colors.red),
+            ),
+            if (_errorMessage == null) const Text('⛔')
+          ],
+        ),
       ),
     );
   }

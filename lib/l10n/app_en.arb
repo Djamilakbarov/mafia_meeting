@@ -1,37 +1,819 @@
 {
   "@@locale": "en",
   "day1": "Day 1",
+  "@day1": {
+    "description": "Label for the first day"
+  },
   "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
   "phase": "Phase",
+  "@phase": {
+    "description": "Label for game phase"
+  },
   "phaseDiscussion": "Discussion",
+  "@phaseDiscussion": {
+    "description": "Label for discussion phase"
+  },
   "phaseVoting": "Voting",
+  "@phaseVoting": {
+    "description": "Label for voting phase"
+  },
   "phaseResult": "Results",
-  "choosePlayerToAccuse": "Choose a player to accuse:",
+  "@phaseResult": {
+    "description": "Label for results phase"
+  },
+  "results": "Results and summary",
+  "@results": {
+    "description": "Phase name for the results phase"
+  },
+  "resultsPhaseInfo": "Game is over. Reviewing the outcome...",
+  "@resultsPhaseInfo": {
+    "description": "Info text for the results phase"
+  },
+  "choosePlayerToAccuse": "Choose player to accuse:",
+  "@choosePlayerToAccuse": {
+    "description": "Instruction to choose a player to accuse"
+  },
   "player": "Player",
+  "@player": {
+    "description": "Generic player label"
+  },
   "skipDiscussion": "Skip discussion",
+  "@skipDiscussion": {
+    "description": "Button to skip the discussion phase"
+  },
   "accused": "Accused",
+  "@accused": {
+    "description": "Label for accused player"
+  },
   "yourVerdict": "Your verdict:",
-  "voteKill": "Vote to Kill",
-  "voteSpare": "Vote to Spare",
-  "votedToKill": "You voted to eliminate",
+  "@yourVerdict": {
+    "description": "Label for player's decision"
+  },
+  "voteKill": "Execute",
+  "@voteKill": {
+    "description": "Option to execute the accused player"
+  },
+  "voteSpare": "Spare",
+  "@voteSpare": {
+    "description": "Option to spare the accused player"
+  },
+  "votedToKill": "You voted to execute",
+  "@votedToKill": {
+    "description": "Message confirming vote to execute"
+  },
   "votedToSpare": "You voted to spare",
+  "@votedToSpare": {
+    "description": "Message confirming vote to spare"
+  },
   "discussionSkipped": "Discussion skipped",
-  "voteResults": "Voting results.",
-  "nextDay": "Next day",
+  "@discussionSkipped": {
+    "description": "Message when discussion phase is skipped"
+  },
+  "voteResults": "Voting Results",
+  "@voteResults": {
+    "description": "Title for voting results section"
+  },
+  "nextDay": "Next Day",
+  "@nextDay": {
+    "description": "Button label to proceed to next day"
+  },
   "lobby": "Lobby",
+  "@lobby": {
+    "description": "Main lobby screen title"
+  },
   "createRoom": "Create Room",
-  "joinRoom": "Join Room",
+  "@createRoom": {
+    "description": "Button to create a new game room"
+  },
+  "joinRoom": "Join",
+  "@joinRoom": {
+    "description": "Button to join an existing room"
+  },
   "roomCode": "Room Code",
-  "players": "Players",
+  "@roomCode": {
+    "description": "Text field for entering room code"
+  },
   "startGame": "Start Game",
+  "@startGame": {
+    "description": "Button to start the game"
+  },
   "invalidRoomCode": "Invalid room code",
+  "@invalidRoomCode": {
+    "description": "Error shown when room code is invalid"
+  },
   "error": "Error",
+  "@error": {
+    "description": "Generic error message"
+  },
   "ok": "OK",
+  "@ok": {
+    "description": "Confirmation button"
+  },
   "leave": "Leave",
+  "@leave": {
+    "description": "Leave the room"
+  },
   "darkTheme": "Dark Theme",
+  "@darkTheme": {
+    "description": "Option for dark mode"
+  },
   "language": "Language",
+  "@language": {
+    "description": "Language selection option"
+  },
   "langRu": "Russian",
+  "@langRu": {
+    "description": "Language option: Russian"
+  },
   "langEn": "English",
-  "langAz": "Azerbaijani"
+  "@langEn": {
+    "description": "Language option: English"
+  },
+  "langAz": "Azerbaijani",
+  "@langAz": {
+    "description": "Language option: Azerbaijani"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  "adminPanel": "Admin Panel",
+  "@adminPanel": {
+    "description": "Admin panel section title"
+  },
+  "myProfile": "My Profile",
+  "@myProfile": {
+    "description": "Profile section title"
+  },
+  "gameHistory": "Game History",
+  "@gameHistory": {
+    "description": "Game history section title"
+  },
+  "eliminated": "Eliminated",
+  "@eliminated": {
+    "description": "Label for eliminated players"
+  },
+  "bestPlayer": "Best Player",
+  "@bestPlayer": {
+    "description": "Label for best performing player"
+  },
+  "likes": "Likes",
+  "@likes": {
+    "description": "Total likes received"
+  },
+  "wins": "Wins",
+  "@wins": {
+    "description": "Total games won"
+  },
+  "losses": "Losses",
+  "@losses": {
+    "description": "Total games lost"
+  },
+  "rating": "Rating",
+  "@rating": {
+    "description": "Player rating label"
+  },
+  "noHistoryData": "No data available",
+  "@noHistoryData": {
+    "description": "Message shown when no history exists"
+  },
+  "gameResultWin": "🏆 Win",
+  "@gameResultWin": {
+    "description": "Win result"
+  },
+  "gameResultLoss": "💀 Loss",
+  "@gameResultLoss": {
+    "description": "Loss result"
+  },
+  "yourRole": "Your Role",
+  "@yourRole": {
+    "description": "Label for showing player's role"
+  },
+  "enterNameAndCode": "Enter room code and your name",
+  "@enterNameAndCode": {
+    "description": "Prompt for entering name and room code"
+  },
+  "enterName": "Enter your name",
+  "@enterName": {
+    "description": "Prompt to enter your name"
+  },
+  "nightTime": "Night",
+  "@nightTime": {
+    "description": "Label for night phase"
+  },
+  "discussionTime": "Discussion",
+  "@discussionTime": {
+    "description": "Label for discussion time"
+  },
+  "votingTime": "Voting",
+  "@votingTime": {
+    "description": "Label for voting time"
+  },
+  "seconds": "sec",
+  "@seconds": {
+    "description": "Abbreviation for seconds"
+  },
+  "createAndJoin": "Create and Join",
+  "@createAndJoin": {
+    "description": "Create a room and join it"
+  },
+  "roomPlayers": "Players in room",
+  "@roomPlayers": {
+    "description": "Players currently in room"
+  },
+  "notEnoughPlayers": "Not enough players (min 4)",
+  "@notEnoughPlayers": {
+    "description": "Error message when too few players"
+  },
+  "mafiaWins": "🩸 Mafia Wins!",
+  "@mafiaWins": {
+    "description": "Message when mafia wins"
+  },
+  "villagersWin": "🛡 Villagers Win!",
+  "@villagersWin": {
+    "description": "Message when villagers win"
+  },
+  "mafiaEliminatedAllThreats": "The mafia eliminated all threats.",
+  "@mafiaEliminatedAllThreats": {
+    "description": "Narrative when mafia wins"
+  },
+  "villagersDefeatedMafia": "The villagers defeated the mafia.",
+  "@villagersDefeatedMafia": {
+    "description": "Narrative when villagers win"
+  },
+  "playAgain": "Play Again",
+  "@playAgain": {
+    "description": "Button to restart the game"
+  },
+  "ad": "Advertisement",
+  "@ad": {
+    "description": "Ad banner label"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Fallback label for unknown state"
+  },
+  "na": "N/A",
+  "@na": {
+    "description": "Not available label"
+  },
+  "room": "Room",
+  "@room": {
+    "description": "Room label"
+  },
+  "staticRooms": "Static Rooms",
+  "@staticRooms": {
+    "description": "Label for permanent rooms"
+  },
+  "phaseTimes": "Phase Times",
+  "@phaseTimes": {
+    "description": "Label for phase time settings"
+  },
+  "cameraLoading": "Loading camera...",
+  "@cameraLoading": {
+    "description": "Message when camera is loading"
+  },
+  "cameraError": "Camera error: no access.",
+  "@cameraError": {
+    "description": "Message when camera access fails"
+  },
+  "you": "You",
+  "@you": {
+    "description": "Label for current player"
+  },
+  "message": "Message",
+  "@message": {
+    "description": "Chat message label"
+  },
+  "bot": "Bot",
+  "@bot": {
+    "description": "Bot label"
+  },
+  "role": "Role",
+  "@role": {
+    "description": "Role label"
+  },
+  "alreadyInRoom": "You are already in this room. Please enter a different name.",
+  "@alreadyInRoom": {
+    "description": "Error when player is already in room"
+  },
+  "roomDoesNotExist": "Room does not exist",
+  "@roomDoesNotExist": {
+    "description": "Error when room not found"
+  },
+  "messageBlocked": "Your message contains prohibited words and was blocked.",
+  "@messageBlocked": {
+    "description": "Error for blocked messages"
+  },
+  "adminCheckError": "Error checking admin status. Please try again.",
+  "@adminCheckError": {
+    "description": "Error checking admin rights"
+  },
+  "checkingAdminStatus": "Checking admin status...",
+  "@checkingAdminStatus": {
+    "description": "Message while checking admin status"
+  },
+  "adminAccess": "Admin Access",
+  "@adminAccess": {
+    "description": "Label for admin access granted"
+  },
+  "noAdminAccess": "You do not have admin access to this panel.",
+  "@noAdminAccess": {
+    "description": "Label for admin access denied"
+  },
+  "addAds": "Add Advertisement",
+  "@addAds": {
+    "description": "Button to add new advertisement"
+  },
+  "bannerUrl": "Banner URL (image or gif):",
+  "@bannerUrl": {
+    "description": "Field label for banner image URL"
+  },
+  "urlHint": "https://...",
+  "@urlHint": {
+    "description": "Hint for entering a URL"
+  },
+  "linkOptional": "Link on click (optional):",
+  "@linkOptional": {
+    "description": "Optional link for banner click"
+  },
+  "active": "Active?",
+  "@active": {
+    "description": "Toggle banner activation"
+  },
+  "saveBanner": "Save Banner",
+  "@saveBanner": {
+    "description": "Save banner button label"
+  },
+  "bannerUrlEmpty": "Banner URL cannot be empty.",
+  "@bannerUrlEmpty": {
+    "description": "Validation message for empty URL"
+  },
+  "bannerAddedSuccess": "✅ Banner added successfully",
+  "@bannerAddedSuccess": {
+    "description": "Success message when banner added"
+  },
+  "bannerAddError": "Error adding banner",
+  "@bannerAddError": {
+    "description": "Error message when banner add fails"
+  },
+  "promoText": "🎯 AD: Participate in the Mafia Challenge tournament and win prizes!",
+  "@promoText": {
+    "description": "Example banner promo text"
+  },
+  "viewAdminLogs": "📜 View Admin Logs",
+  "@viewAdminLogs": {
+    "description": "Button to view logs"
+  },
+  "users": "📋 Users",
+  "@users": {
+    "description": "Label for users list"
+  },
+  "games": "Games",
+  "@games": {
+    "description": "Label for game records"
+  },
+  "usersLoadError": "Error loading users",
+  "@usersLoadError": {
+    "description": "Error when loading user list"
+  },
+  "createRoomError": "Error creating room",
+  "@createRoomError": {
+    "description": "Error during room creation"
+  },
+  "joinRoomError": "Error joining room",
+  "@joinRoomError": {
+    "description": "Error during room join"
+  },
+  "createStaticRoomError": "Error creating static room",
+  "@createStaticRoomError": {
+    "description": "Error during static room creation"
+  },
+  "addPlayerError": "Error adding player to room",
+  "@addPlayerError": {
+    "description": "Error during player addition"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Label for profile"
+  },
+  "likesReceived": "Likes Received",
+  "@likesReceived": {
+    "description": "Total likes received"
+  },
+  "bestPlayerTitle": "Best Player Count",
+  "@bestPlayerTitle": {
+    "description": "Number of times player was best"
+  },
+  "profileNotFound": "Profile not found",
+  "@profileNotFound": {
+    "description": "Error when profile not found"
+  },
+  "profileLoadError": "Error loading profile",
+  "@profileLoadError": {
+    "description": "Error when loading profile"
+  },
+  "win": "🏆 Win",
+  "@win": {
+    "description": "Short label for win"
+  },
+  "loss": "💀 Loss",
+  "@loss": {
+    "description": "Short label for loss"
+  },
+  "bestPlayerShort": "🏅",
+  "@bestPlayerShort": {
+    "description": "Icon for best player"
+  },
+  "loadRoomSettingsError": "Error loading room settings",
+  "@loadRoomSettingsError": {
+    "description": "Error during room settings load"
+  },
+  "peerInfoSaveError": "Error saving peer info",
+  "@peerInfoSaveError": {
+    "description": "Error during WebRTC peer info save"
+  },
+  "videoPeersError": "Video peers stream error",
+  "@videoPeersError": {
+    "description": "Error with video stream"
+  },
+  "startGameError": "Error starting game",
+  "@startGameError": {
+    "description": "Error when starting the game"
+  },
+  "leaveRoomError": "Error leaving room",
+  "@leaveRoomError": {
+    "description": "Error on leave"
+  },
+  "alreadyLiked": "You have already liked a player.",
+  "@alreadyLiked": {
+    "description": "Error when like is already given"
+  },
+  "likedPlayer": "You liked {playerName}!",
+  "@likedPlayer": {
+    "placeholders": {
+        "playerName": {}
+    },
+    "description": "Confirmation after liking a player"
+  },
+  "cannotLikeSelf": "You cannot like yourself.",
+  "@cannotLikeSelf": {
+    "description": "Error when cannot like self"
+  },
+  "roleDistribution": "Role Distribution",
+  "@roleDistribution": {
+    "description": "Message during role distribution"
+  },
+  "vote": "Vote",
+  "@vote": {
+    "description": "Label for vote phase"
+  },
+  "castVote": "Cast your vote",
+  "@castVote": {
+    "description": "Button label to submit vote"
+  },
+  "nightPhaseInfo": "Night phase in progress...",
+  "@nightPhaseInfo": {
+    "description": "Info text for night phase"
+  },
+  "morningPhaseInfo": "Morning phase begins...",
+  "@morningPhaseInfo": {
+    "description": "Info text for morning phase"
+  },
+  "maniacWins": "🔪 Maniac Wins!",
+  "@maniacWins": {
+      "description": "Message when maniac wins"
+  },
+  "playerEliminated": "Player eliminated",
+  "@playerEliminated": {
+      "description": "Message for player eliminated"
+  },
+  "noOneEliminated": "No one was eliminated this round.",
+  "@noOneEliminated": {
+      "description": "Message when no one is eliminated"
+  },
+  "allVotes": "All votes:",
+  "@allVotes": {
+      "description": "Label for all votes list"
+  },
+  "votedFor": "You voted for",
+  "@votedFor": {
+      "description": "Confirmation message for vote"
+  },
+  "actionSubmitted": "Action submitted for",
+  "@actionSubmitted": {
+      "description": "Confirmation message for night action"
+  },
+  "chatError": "Chat error",
+  "@chatError": {
+      "description": "Error message for chat"
+  },
+  "like": "Like",
+  "@like": {
+      "description": "Button to like a player"
+  },
+  "chooseTarget": "Choose your target for the night action:",
+  "@chooseTarget": {
+      "description": "Prompt for choosing a target"
+  },
+  "mafiaAction": "Kill",
+  "@mafiaAction": {
+      "description": "Mafia's action label"
+  },
+  "mafiaActionHint": "Choose who to kill tonight.",
+  "@mafiaActionHint": {
+      "description": "Hint for mafia's action"
+  },
+  "doctorAction": "Heal",
+  "@doctorAction": {
+      "description": "Doctor's action label"
+  },
+  "doctorActionHint": "Choose who to heal tonight.",
+  "@doctorActionHint": {
+      "description": "Hint for doctor's action"
+  },
+  "detectiveAction": "Check",
+  "@detectiveAction": {
+      "description": "Detective's action label"
+  },
+  "detectiveActionHint": "Choose who to investigate tonight.",
+  "@detectiveActionHint": {
+      "description": "Hint for detective's action"
+  },
+  "maniacAction": "Maniac Kill",
+  "@maniacAction": {
+      "description": "Maniac's action label"
+  },
+  "maniacActionHint": "Choose who to kill as Maniac.",
+  "@maniacActionHint": {
+      "description": "Hint for maniac's action"
+  },
+  "lastNightVictim": "Last night's victim",
+  "@lastNightVictim": {
+      "description": "Label for victim of last night"
+  },
+  "noVictim": "No victim last night.",
+  "@noVictim": {
+      "description": "Message if no one was killed last night"
+  },
+  "processingResults": "Processing Results...",
+  "@processingResults": {
+      "description": "Message while processing game results"
+  },
+  "gameOver": "Game Over!",
+  "@gameOver": {
+      "description": "Message when game ends"
+  },
+  "roomClosed": "Room closed by host or no longer exists.",
+  "@roomClosed": {
+      "description": "Message when room is closed"
+  },
+  "roomError": "Room error",
+  "@roomError": {
+      "description": "Generic room error message"
+  },
+  "timeLeft": "Time Left",
+  "@timeLeft": {
+      "description": "Time left in current phase"
+  },
+  "mafiaRole": "Mafia",
+  "@mafiaRole": {
+    "description": "Mafia role name"
+  },
+  "doctorRole": "Doctor",
+  "@doctorRole": {
+    "description": "Doctor role name"
+  },
+  "detectiveRole": "Detective",
+  "@detectiveRole": {
+    "description": "Detective role name"
+  },
+  "maniacRole": "Maniac",
+  "@maniacRole": {
+    "description": "Maniac role name"
+  },
+  "villagerRole": "Villager",
+  "@villagerRole": {
+    "description": "Villager role name"
+  },
+  "selectImageSource": "Select Image Source",
+  "@selectImageSource": {
+    "description": "Prompt to select image source"
+  },
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera option"
+  },
+  "gallery": "Gallery",
+  "@gallery": {
+    "description": "Gallery option"
+  },
+  "changeAvatar": "Change Avatar",
+  "@changeAvatar": {
+    "description": "Button to change avatar"
+  },
+  "deleteAvatar": "Delete Avatar",
+  "@deleteAvatar": {
+    "description": "Button to delete avatar"
+  },
+  "avatarUploadSuccess": "Avatar uploaded successfully!",
+  "@avatarUploadSuccess": {
+    "description": "Success message for avatar upload"
+  },
+  "avatarUploadError": "Failed to upload avatar",
+  "@avatarUploadError": {
+    "description": "Error message for avatar upload"
+  },
+  "avatarDeleteSuccess": "Avatar deleted successfully!",
+  "@avatarDeleteSuccess": {
+    "description": "Success message for avatar deletion"
+  },
+  "avatarDeleteError": "Failed to delete avatar",
+  "@avatarDeleteError": {
+    "description": "Error message for avatar deletion"
+  },
+  "country": "Country",
+  "@country": {
+    "description": "Country label"
+  },
+  "roomCodeIs": "Your room code is:",
+  "@roomCodeIs": {
+    "description": "Label showing the room code to player"
+  },
+  "videoCallTitle": "Video Call",
+  "@videoCallTitle": {
+    "description": "Title for video call screen"
+  },
+  "setupUsername": "Setup Username",
+  "@setupUsername": {
+    "description": "Title for username setup screen"
+  },
+  "welcomePleaseEnterUsername": "Welcome! Please enter your desired username to start.",
+  "@welcomePleaseEnterUsername": {
+    "description": "Welcome message prompting user to enter username"
+  },
+  "username": "Username",
+  "@username": {
+    "description": "Label for username input field"
+  },
+  "saveAndContinue": "Save and Continue",
+  "@saveAndContinue": {
+    "description": "Button to save username and proceed"
+  },
+  "usernameCannotBeEmpty": "Username cannot be empty.",
+  "@usernameCannotBeEmpty": {
+    "description": "Error message when username field is empty"
+  },
+  "usernameLengthError": "Username must be between 3 and 20 characters.",
+  "@usernameLengthError": {
+    "description": "Error message when username length is invalid"
+  },
+  "usernameAlreadyTaken": "This username is already taken. Please choose another.",
+  "@usernameAlreadyTaken": {
+    "description": "Error message when username is not available"
+  },
+  "saveUsernameError": "Error saving username",
+  "@saveUsernameError": {
+    "description": "Generic error message when username save fails"
+  },
+  "mute": "Mute",
+  "@mute": {
+    "description": "Text for mute button"
+  },
+  "unmute": "Unmute",
+  "@unmute": {
+    "description": "Text for unmute button"
+  },
+  "hideVideo": "Hide Video",
+  "@hideVideo": {
+    "description": "Text for hide video button"
+  },
+  "showVideo": "Show Video",
+  "@showVideo": {
+    "description": "Text for show video button"
+  },
+  "selectLanguageForRoom": "Select language for the room",
+  "@selectLanguageForRoom": {
+    "description": "Dropdown label for selecting a room's language"
+  },
+  "roomLanguage": "Room language",
+  "@roomLanguage": {
+    "description": "Shows the current room's language"
+  },
+  "activeRooms": "Active rooms",
+  "@activeRooms": {
+    "description": "Heading for the list of active game rooms"
+  },
+  "noActiveRooms": "No active rooms",
+  "@noActiveRooms": {
+    "description": "Message when there are no active rooms"
+  },
+  "statusWaitingForPlayers": "Waiting for players",
+  "@statusWaitingForPlayers": {
+    "description": "Room status: waiting for players to join"
+  },
+  "statusGameStarted": "Game started",
+  "@statusGameStarted": {
+    "description": "Room status: game has just begun"
+  },
+  "statusInProgress": "Game in progress",
+  "@statusInProgress": {
+    "description": "Room status: game is ongoing"
+  },
+  "statusGameOver": "Game over",
+  "@statusGameOver": {
+    "description": "Room status: game has ended"
+  },
+  "statusUnknown": "Unknown status",
+  "@statusUnknown": {
+    "description": "Fallback for unrecognized room status"
+  },
+  "join": "Join",
+  "@join": {
+    "description": "Button to join a game room"
+  },
+  "host": "Host",
+  "@host": {
+    "description": "Label for the room host"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Label for room/game status"
+  },
+  "players": "Players",
+  "@players": {
+  "description": "Label for players list"
+  },
+  "usernameChangeLimit": "Username can only be changed once every 24 hours.",
+  "@usernameChangeLimit": {
+    "description": "Message shown when trying to change username too frequently"
+  },
+  "usernameSaved": "Username saved successfully!",
+  "@usernameSaved": {
+    "description": "Success message when username is saved"
+  },
+  "personalSettings": "Personal Settings",
+  "@personalSettings": {
+    "description": "Title for personal settings section"
+  },
+  "viewEditProfile": "View and edit your profile",
+  "@viewEditProfile": {
+    "description": "Description for profile editing section"
+  },
+  "changeUsername": "Change Username",
+  "@changeUsername": {
+    "description": "Button text for changing username"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Generic save button text"
+  },
+  "appSettings": "App Settings",
+  "@appSettings": {
+    "description": "Title for app settings section"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "supportProject": "Support the Project 💖",
+  "@supportProject": {
+    "description": "Title for support section"
+  },
+  "supportProjectDescription": "Help us improve the app with your donations.",
+  "@supportProjectDescription": {
+    "description": "Description for support section"
+  },
+  "noGameHistory": "No game history found.",
+  "@noGameHistory": {
+    "description": "Message shown when no game history exists"
+  },
+  "none": "None",
+  "@none": {
+    "description": "Generic 'none' value"
+  },
+  "unknownPlayer": "Unknown Player",
+  "@unknownPlayer": {
+    "description": "Placeholder for unknown player"
 
+  },
+  "result": "Result",
+  "@result": {
+    "description": "Label for game result"
+  },
+  "adminAccessDescription": "Access administrative tools and logs.",
+  "@adminAccessDescription": {
+    "description": "Description for admin access"
+  },
+  "errorLoadingHistory": "Error loading game history",
+  "@errorLoadingHistory": {
+    "description": "Error message when game history fails to load"
+  }
 }

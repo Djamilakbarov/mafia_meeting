@@ -1,18 +1,14 @@
-
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
+// admin_login.dart
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'admin_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'admin_logger.dart';
-
-String hashPassword(String password) {
-  return sha256.convert(utf8.encode(password)).toString();
-}
+import 'admin_gate.dart';
 
 class AdminLogin extends StatefulWidget {
-  const AdminLogin({super.key});
+  final String currentUserId;
+
+  const AdminLogin({super.key, required this.currentUserId});
 
   @override
   State<AdminLogin> createState() => _AdminLoginState();
@@ -31,38 +27,68 @@ class _AdminLoginState extends State<AdminLogin> {
 
   Future<void> _autoLogin() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedAdmin = prefs.getString('admin');
-    if (savedAdmin != null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+    final savedAdminEmail = prefs.getString('admin_email');
+
+    if (FirebaseAuth.instance.currentUser != null &&
+        FirebaseAuth.instance.currentUser!.email == savedAdminEmail) {
+      if (mounted) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (_) => AdminGate(
+                    currentUserId: FirebaseAuth.instance.currentUser!.uid)));
+      }
     }
   }
 
   Future<void> _tryLogin() async {
-    final name = _nameController.text.trim();
+    final email = _nameController.text.trim();
     final pass = _passController.text.trim();
 
-    if (name.isEmpty || pass.isEmpty) {
-      setState(() => _error = 'Введите имя и пароль');
+    if (email.isEmpty || pass.isEmpty) {
+      setState(() => _error = 'Введите Email и пароль');
       return;
     }
 
-    final doc = await FirebaseFirestore.instance.collection('admins').doc(name).get();
-    final hashedInput = hashPassword(pass);
+    setState(() => _error = null);
 
-    if (!doc.exists || doc['password'] != hashedInput) {
-      setState(() => _error = 'Неверный логин или пароль');
-      return;
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: pass,
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('admin_email', email);
+
+      await logAdminAction(userCredential.user!.uid, 'Вход в админ-панель');
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) =>
+                  AdminGate(currentUserId: userCredential.user!.uid)),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+          _error = 'Неверный Email или пароль';
+        } else if (e.code == 'invalid-email') {
+          _error = 'Некорректный формат Email';
+        } else {
+          _error = 'Ошибка входа: ${e.message}';
+          print('FirebaseAuthException: ${e.code} - ${e.message}');
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Произошла непредвиденная ошибка: $e';
+        print('Непредвиденная ошибка при входе: $e');
+      });
     }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('admin', name);
-
-    await logAdminAction(name, 'Вход в админ-панель');
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const AdminScreen()),
-    );
   }
 
   @override
@@ -75,7 +101,8 @@ class _AdminLoginState extends State<AdminLogin> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Имя (ID в админах)'),
+              decoration: const InputDecoration(labelText: 'Email админа'),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               controller: _passController,

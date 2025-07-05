@@ -1,15 +1,14 @@
-// lib/screens/victory_screen.dart
 import 'package:flutter/material.dart';
 
 class VictoryScreen extends StatelessWidget {
-  final String winnerTeam; // "mafia" or "villagers"
-  final String? message; // ДОБАВЛЕН НЕОБЯЗАТЕЛЬНЫЙ ПАРАМЕТР MESSAGE
+  final String winnerTeam;
+  final String? message;
   final VoidCallback onPlayAgain;
 
   const VictoryScreen({
     super.key,
     required this.winnerTeam,
-    this.message, // ТЕПЕРЬ MESSAGE НЕОБЯЗАТЕЛЕН
+    this.message,
     required this.onPlayAgain,
   });
 
@@ -17,7 +16,6 @@ class VictoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMafia = winnerTeam == 'mafia';
 
-    // Используем переданное сообщение, если оно есть, иначе формируем по winnerTeam
     final String displayMessage =
         message ?? (isMafia ? '🩸 Mafia Wins!' : '🛡 Villagers Win!');
     final String detailMessage = isMafia
@@ -39,7 +37,7 @@ class VictoryScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                displayMessage, // Используем displayMessage
+                displayMessage,
                 style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -48,7 +46,7 @@ class VictoryScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                detailMessage, // Используем detailMessage
+                detailMessage,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,

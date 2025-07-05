@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'waiting_room_screen.dart';
+import 'dart:math';
+import '../models/player_model.dart';
+import '../models/role_enum.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateRoomScreen extends StatefulWidget {
-  const CreateRoomScreen({super.key});
+  final String currentUserId; // НОВОЕ: Принимаем UID
+  final String playerName; // НОВОЕ: Принимаем имя игрока
+  final Future<void> Function(bool) toggleTheme; // <-- Добавлено
+  final bool isDarkMode; // <-- Добавлено
+
+  const CreateRoomScreen({
+    super.key,
+    required this.currentUserId,
+    required this.playerName,
+    required this.toggleTheme, // <-- Добавлено
+    required this.isDarkMode, // <-- Добавлено
+  });
 
   @override
   State<CreateRoomScreen> createState() => _CreateRoomScreenState();
@@ -12,62 +26,81 @@ class CreateRoomScreen extends StatefulWidget {
 
 class _CreateRoomScreenState extends State<CreateRoomScreen> {
   bool _isLoading = false;
-  late String _playerName;
   String _roomCode = '';
+  final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
-    _loadPlayerName();
-    _generateRoomCode();
+    _roomCode = _generateRandomRoomCode(); // Генерируем код сразу
   }
 
-  Future<void> _loadPlayerName() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _playerName = prefs.getString('playerName') ?? 'Player';
-    });
-  }
-
-  void _generateRoomCode() {
+  String _generateRandomRoomCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    _roomCode = List.generate(
-            6,
-            (index) =>
-                chars[(DateTime.now().microsecond + index * 3) % chars.length])
+    return List.generate(6, (index) => chars[_random.nextInt(chars.length)])
         .join();
   }
 
   Future<void> _createRoom() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _isLoading = true);
 
     final roomRef =
         FirebaseFirestore.instance.collection('rooms').doc(_roomCode);
 
-    await roomRef.set({
-      'roomCode': _roomCode,
-      'host': _playerName,
-      'players': [_playerName],
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await roomRef.set({
+        'roomCode': _roomCode,
+        'host': widget.playerName, // Используем имя, переданное через виджет
+        'players': [
+          Player(
+                  id: widget.currentUserId,
+                  name: widget.playerName,
+                  role: Role.villager)
+              .toMap()
+        ],
+        'createdAt': FieldValue.serverTimestamp(),
+        'roomSettings': {
+          'discussionDuration': 120,
+          'votingDuration': 60,
+          'nightDuration': 15,
+        },
+        'gamePhase': 'waiting',
+      });
 
-    setState(() => _isLoading = false);
+      setState(() => _isLoading = false);
 
-    if (context.mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              WaitingRoomScreen(roomCode: _roomCode, playerName: _playerName),
-        ),
-      );
+      if (context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WaitingRoomScreen(
+              roomCode: _roomCode,
+              playerName: widget.playerName,
+              currentUserId: widget.currentUserId, // Передаем UID
+              toggleTheme: widget.toggleTheme, // <-- Передаем
+              isDarkMode: widget.isDarkMode, // <-- Передаем
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print("Ошибка при создании комнаты: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${loc.createRoomError}: $e')),
+        );
+      }
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Создание комнаты')),
+      appBar: AppBar(title: Text(loc.createRoom)),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: _isLoading
@@ -76,7 +109,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 50),
-                  Text("Код вашей комнаты:",
+                  Text(loc.roomCodeIs,
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 10),
                   SelectableText(_roomCode,
@@ -85,7 +118,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _createRoom,
-                    child: const Text("Создать комнату и продолжить"),
+                    child: Text(loc.createAndJoin),
                   ),
                 ],
               ),

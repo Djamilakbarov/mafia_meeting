@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "678632726327",
+    "firebase_url": "https://mafia-meeting-9705b-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "mafia-meeting-9705b",
     "storage_bucket": "mafia-meeting-9705b.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.example.mafia_meeting"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "678632726327-9hdubpii43lhbmknhd5bprajs6070rvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mafia_meeting",
+            "certificate_hash": "115a77875b8b0c7451b510440f75c8fd7e92cad2"
+          }
+        },
+        {
+          "client_id": "678632726327-ia28enmrj34512m8roed4e9jf7v0p7qa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDgZ_w-d995eOy3QB0oBFpGnvpMOjQLhSY"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678632726327-ia28enmrj34512m8roed4e9jf7v0p7qa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "678632726327-n2am6j6i2jj8s0ih5h4jjv5osp7kan9t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mafiaMeeting"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +57,20 @@
           "package_name": "com.example.mafiameeting"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "678632726327-1948m15nt3vvskj8e72io3dnaeque3ph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mafiameeting",
+            "certificate_hash": "115a77875b8b0c7451b510440f75c8fd7e92cad2"
+          }
+        },
+        {
+          "client_id": "678632726327-ia28enmrj34512m8roed4e9jf7v0p7qa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDgZ_w-d995eOy3QB0oBFpGnvpMOjQLhSY"
@@ -39,7 +78,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678632726327-ia28enmrj34512m8roed4e9jf7v0p7qa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "678632726327-n2am6j6i2jj8s0ih5h4jjv5osp7kan9t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mafiaMeeting"
+              }
+            }
+          ]
         }
       }
     }

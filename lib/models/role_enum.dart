@@ -1,4 +1,3 @@
-
 enum Role {
   mafia,
   doctor,

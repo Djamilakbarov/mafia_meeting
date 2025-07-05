@@ -1,37 +1,818 @@
 {
   "@@locale": "az",
-  "day1": "1-ci gün",
+  "day1": "1-ci Gün",
+  "@day1": {
+    "description": "Label for the first day"
+  },
   "welcome": "Xoş gəlmisiniz",
+  "@welcome": {
+    "description": "Welcome message"
+  },
   "phase": "Faza",
+  "@phase": {
+    "description": "Label for game phase"
+  },
   "phaseDiscussion": "Müzakirə",
+  "@phaseDiscussion": {
+    "description": "Label for discussion phase"
+  },
   "phaseVoting": "Səsvermə",
+  "@phaseVoting": {
+    "description": "Label for voting phase"
+  },
   "phaseResult": "Nəticələr",
-  "choosePlayerToAccuse": "İttiham etmək üçün oyunçu seçin:",
+  "@phaseResult": {
+    "description": "Label for results phase"
+  },
+  "results": "Oyun nəticələri",
+  "@results": {
+    "description": "Phase name for the results phase"
+  },
+  "resultsPhaseInfo": "Oyun bitdi. Nəticələr yekunlaşdırılır...",
+  "@resultsPhaseInfo": {
+    "description": "Info text for the results phase"
+  },
+  "choosePlayerToAccuse": "İtham etmək üçün oyunçu seçin:",
+  "@choosePlayerToAccuse": {
+    "description": "Instruction to choose a player to accuse"
+  },
   "player": "Oyunçu",
-  "skipDiscussion": "Müzakirəni keç",
-  "accused": "İttiham edilən",
+  "@player": {
+    "description": "Generic player label"
+  },
+  "skipDiscussion": "Müzakirəni atla",
+  "@skipDiscussion": {
+    "description": "Button to skip the discussion phase"
+  },
+  "accused": "İtham olunan",
+  "@accused": {
+    "description": "Label for accused player"
+  },
   "yourVerdict": "Sizin qərarınız:",
+  "@yourVerdict": {
+    "description": "Label for player's decision"
+  },
   "voteKill": "Edam et",
+  "@voteKill": {
+    "description": "Option to execute the accused player"
+  },
   "voteSpare": "Bağışla",
-  "votedToKill": "Siz edama səs verdiniz",
+  "@voteSpare": {
+    "description": "Option to spare the accused player"
+  },
+  "votedToKill": "Siz edam etməyə səs verdiniz",
+  "@votedToKill": {
+    "description": "Message confirming vote to execute"
+  },
   "votedToSpare": "Siz bağışlamağa səs verdiniz",
-  "discussionSkipped": "Müzakirə keçildi",
-  "voteResults": "Səsvermənin nəticələri.",
+  "@votedToSpare": {
+    "description": "Message confirming vote to spare"
+  },
+  "discussionSkipped": "Müzakirə atlandı",
+  "@discussionSkipped": {
+    "description": "Message when discussion phase is skipped"
+  },
+  "voteResults": "Səsvermə nəticələri",
+  "@voteResults": {
+    "description": "Title for voting results section"
+  },
   "nextDay": "Növbəti gün",
-  "lobby": "Lobbi",
+  "@nextDay": {
+    "description": "Button label to proceed to next day"
+  },
+  "lobby": "Lobi",
+  "@lobby": {
+    "description": "Main lobby screen title"
+  },
   "createRoom": "Otaq yarat",
-  "joinRoom": "Otağa qoşul",
+  "@createRoom": {
+    "description": "Button to create a new game room"
+  },
+  "joinRoom": "Qoşul",
+  "@joinRoom": {
+    "description": "Button to join an existing room"
+  },
   "roomCode": "Otaq kodu",
+  "@roomCode": {
+    "description": "Text field for entering room code"
+  },
   "players": "Oyunçular",
+  "@players": {
+    "description": "List of players in the room"
+  },
   "startGame": "Oyuna başla",
+  "@startGame": {
+    "description": "Button to start the game"
+  },
   "invalidRoomCode": "Yanlış otaq kodu",
+  "@invalidRoomCode": {
+    "description": "Error shown when room code is invalid"
+  },
   "error": "Xəta",
+  "@error": {
+    "description": "Generic error message"
+  },
   "ok": "OK",
+  "@ok": {
+    "description": "Confirmation button"
+  },
   "leave": "Çıx",
-  "darkTheme": "Tünd Mövzu",
+  "@leave": {
+    "description": "Leave the room"
+  },
+  "darkTheme": "Qaranlıq tema",
+  "@darkTheme": {
+    "description": "Option for dark mode"
+  },
   "language": "Dil",
-  "langRu": "Rusca",
-  "langEn": "Ingiliscə",
-  "langAz": "Azərbaycanca"
-
+  "@language": {
+    "description": "Language selection option"
+  },
+  "langRu": "Rus",
+  "@langRu": {
+    "description": "Language option: Russian"
+  },
+  "langEn": "İngilis",
+  "@langEn": {
+    "description": "Language option: English"
+  },
+  "langAz": "Azərbaycan",
+  "@langAz": {
+    "description": "Language option: Azerbaijani"
+  },
+  "settings": "Parametrlər",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  "adminPanel": "Admin paneli",
+  "@adminPanel": {
+    "description": "Admin panel section title"
+  },
+  "myProfile": "Profilim",
+  "@myProfile": {
+    "description": "Profile section title"
+  },
+  "gameHistory": "Oyun tarixçəsi",
+  "@gameHistory": {
+    "description": "Game history section title"
+  },
+  "eliminated": "Öldürülüb",
+  "@eliminated": {
+    "description": "Label for eliminated players"
+  },
+  "bestPlayer": "Ən yaxşı oyunçu",
+  "@bestPlayer": {
+    "description": "Label for best performing player"
+  },
+  "likes": "Bəyənmələr",
+  "@likes": {
+    "description": "Total likes received"
+  },
+  "wins": "Qələbələr",
+  "@wins": {
+    "description": "Total games won"
+  },
+  "losses": "Məğlubiyyətlər",
+  "@losses": {
+    "description": "Total games lost"
+  },
+  "rating": "Reytinq",
+  "@rating": {
+    "description": "Player rating label"
+  },
+  "noHistoryData": "Məlumat yoxdur",
+  "@noHistoryData": {
+    "description": "Message shown when no history exists"
+  },
+  "gameResultWin": "🏆 Qələbə",
+  "@gameResultWin": {
+    "description": "Win result"
+  },
+  "gameResultLoss": "💀 Məğlubiyyət",
+  "@gameResultLoss": {
+    "description": "Loss result"
+  },
+  "yourRole": "Sizin rolunuz",
+  "@yourRole": {
+    "description": "Label for showing player's role"
+  },
+  "enterNameAndCode": "Otaq kodunu və adınızı daxil edin",
+  "@enterNameAndCode": {
+    "description": "Prompt for entering name and room code"
+  },
+  "enterName": "Adınızı daxil edin",
+  "@enterName": {
+    "description": "Prompt to enter your name"
+  },
+  "nightTime": "Gecə",
+  "@nightTime": {
+    "description": "Label for night phase"
+  },
+  "discussionTime": "Müzakirə",
+  "@discussionTime": {
+    "description": "Label for discussion time"
+  },
+  "votingTime": "Səsvermə",
+  "@votingTime": {
+    "description": "Label for voting time"
+  },
+  "seconds": "san",
+  "@seconds": {
+    "description": "Abbreviation for seconds"
+  },
+  "createAndJoin": "Yarat və qoşul",
+  "@createAndJoin": {
+    "description": "Create a room and join it"
+  },
+  "roomPlayers": "Otaqdakı oyunçular",
+  "@roomPlayers": {
+    "description": "Players currently in room"
+  },
+  "notEnoughPlayers": "Kifayət qədər oyunçu yoxdur (minimum 4)",
+  "@notEnoughPlayers": {
+    "description": "Error message when too few players"
+  },
+  "mafiaWins": "🩸 Mafiya qalib gəldi!",
+  "@mafiaWins": {
+    "description": "Message when mafia wins"
+  },
+  "villagersWin": "🛡 Kəndlilər qalib gəldi!",
+  "@villagersWin": {
+    "description": "Message when villagers win"
+  },
+  "mafiaEliminatedAllThreats": "Mafiya bütün təhlükələri aradan qaldırdı.",
+  "@mafiaEliminatedAllThreats": {
+    "description": "Narrative when mafia wins"
+  },
+  "villagersDefeatedMafia": "Kəndlilər mafiyanı məğlub etdi.",
+  "@villagersDefeatedMafia": {
+    "description": "Narrative when villagers win"
+  },
+  "playAgain": "Yenidən oyna",
+  "@playAgain": {
+    "description": "Button to restart the game"
+  },
+  "ad": "Reklam",
+  "@ad": {
+    "description": "Ad banner label"
+  },
+  "continueButton": "Davam et",
+  "@continueButton": {
+    "description": "Continue button"
+  },
+  "unknown": "Naməlum",
+  "@unknown": {
+    "description": "Fallback label for unknown state"
+  },
+  "na": "M/C",
+  "@na": {
+    "description": "Not available label"
+  },
+  "room": "Otaq",
+  "@room": {
+    "description": "Room label"
+  },
+  "staticRooms": "Sabit otaqlar",
+  "@staticRooms": {
+    "description": "Label for permanent rooms"
+  },
+  "phaseTimes": "Faza vaxtları",
+  "@phaseTimes": {
+    "description": "Label for phase time settings"
+  },
+  "cameraLoading": "Kamera yüklənir...",
+  "@cameraLoading": {
+    "description": "Message when camera is loading"
+  },
+  "cameraError": "Kamera xətası: giriş yoxdur.",
+  "@cameraError": {
+    "description": "Message when camera access fails"
+  },
+  "you": "Siz",
+  "@you": {
+    "description": "Label for current player"
+  },
+  "message": "Mesaj",
+  "@message": {
+    "description": "Chat message label"
+  },
+  "bot": "Bot",
+  "@bot": {
+    "description": "Bot label"
+  },
+  "role": "Rol",
+  "@role": {
+    "description": "Role label"
+  },
+  "alreadyInRoom": "Siz artıq bu otaqdasınız. Fərqli bir ad daxil edin.",
+  "@alreadyInRoom": {
+    "description": "Error when player is already in room"
+  },
+  "roomDoesNotExist": "Otaq mövcud deyil",
+  "@roomDoesNotExist": {
+    "description": "Error when room not found"
+  },
+  "messageBlocked": "Mesajınız qadağan olunmuş sözlər ehtiva edir və bloklanıb.",
+  "@messageBlocked": {
+    "description": "Error for blocked messages"
+  },
+  "adminCheckError": "Admin statusu yoxlanılarkən xəta baş verdi. Yenidən cəhd edin.",
+  "@adminCheckError": {
+    "description": "Error checking admin rights"
+  },
+  "checkingAdminStatus": "Admin statusu yoxlanılır...",
+  "@checkingAdminStatus": {
+    "description": "Message while checking admin status"
+  },
+  "adminAccess": "Admin girişi",
+  "@adminAccess": {
+    "description": "Label for admin access granted"
+  },
+  "noAdminAccess": "Bu panel üçün admin hüququnuz yoxdur.",
+  "@noAdminAccess": {
+    "description": "Label for admin access denied"
+  },
+  "addAds": "Reklam əlavə et",
+  "@addAds": {
+    "description": "Button to add new advertisement"
+  },
+  "bannerUrl": "Banner URL (şəkil və ya gif):",
+  "@bannerUrl": {
+    "description": "Field label for banner image URL"
+  },
+  "urlHint": "https://...",
+  "@urlHint": {
+    "description": "Hint for entering a URL"
+  },
+  "linkOptional": "Klik üçün link (istəyə bağlı):",
+  "@linkOptional": {
+    "description": "Optional link for banner click"
+  },
+  "active": "Aktiv?",
+  "@active": {
+    "description": "Toggle banner activation"
+  },
+  "saveBanner": "Banneri saxla",
+  "@saveBanner": {
+    "description": "Save banner button label"
+  },
+  "bannerUrlEmpty": "Banner URL boş ola bilməz.",
+  "@bannerUrlEmpty": {
+    "description": "Validation message for empty URL"
+  },
+  "bannerAddedSuccess": "✅ Banner uğurla əlavə edildi",
+  "@bannerAddedSuccess": {
+    "description": "Success message when banner added"
+  },
+  "bannerAddError": "Banner əlavə edilərkən xəta baş verdi",
+  "@bannerAddError": {
+    "description": "Error message when banner add fails"
+  },
+  "promoText": "🎯 REKLAM: Mafia Challenge turnirində iştirak edin və mükafatlar qazanın!",
+  "@promoText": {
+    "description": "Example banner promo text"
+  },
+  "viewAdminLogs": "📜 Admin jurnalları",
+  "@viewAdminLogs": {
+    "description": "Button to view logs"
+  },
+  "users": "📋 İstifadəçilər",
+  "@users": {
+    "description": "Label for users list"
+  },
+  "games": "Oyunlar",
+  "@games": {
+    "description": "Label for game records"
+  },
+  "usersLoadError": "İstifadəçilər yüklənərkən xəta baş verdi",
+  "@usersLoadError": {
+    "description": "Error when loading user list"
+  },
+  "createRoomError": "Otaq yaradılarkən xəta baş verdi",
+  "@createRoomError": {
+    "description": "Error during room creation"
+  },
+  "joinRoomError": "Otağa qoşularkən xəta baş verdi",
+  "@joinRoomError": {
+    "description": "Error during room join"
+  },
+  "createStaticRoomError": "Sabit otaq yaradılarkən xəta baş verdi",
+  "@createStaticRoomError": {
+    "description": "Error during static room creation"
+  },
+  "addPlayerError": "Oyunçu otağa əlavə edilərkən xəta baş verdi",
+  "@addPlayerError": {
+    "description": "Error during player addition"
+  },
+  "profile": "Profil",
+  "@profile": {
+    "description": "Label for profile"
+  },
+  "likesReceived": "Alınan bəyənmələr",
+  "@likesReceived": {
+    "description": "Total likes received"
+  },
+  "bestPlayerTitle": "Ən yaxşı oyunçu (dəfə)",
+  "@bestPlayerTitle": {
+    "description": "Number of times player was best"
+  },
+  "profileNotFound": "Profil tapılmadı",
+  "@profileNotFound": {
+    "description": "Error when profile not found"
+  },
+  "profileLoadError": "Profil yüklənərkən xəta baş verdi",
+  "@profileLoadError": {
+    "description": "Error when loading profile"
+  },
+  "win": "🏆 Qələbə",
+  "@win": {
+    "description": "Short label for win"
+  },
+  "loss": "💀 Məğlubiyyət",
+  "@loss": {
+    "description": "Short label for loss"
+  },
+  "bestPlayerShort": "🏅",
+  "@bestPlayerShort": {
+    "description": "Icon for best player"
+  },
+  "loadRoomSettingsError": "Otaq parametrləri yüklənərkən xəta baş verdi",
+  "@loadRoomSettingsError": {
+    "description": "Error during room settings load"
+  },
+  "peerInfoSaveError": "Peer məlumatı saxlanılarkən xəta baş verdi",
+  "@peerInfoSaveError": {
+    "description": "Error during WebRTC peer info save"
+  },
+  "videoPeersError": "Video axını xətası",
+  "@videoPeersError": {
+    "description": "Error with video stream"
+  },
+  "startGameError": "Oyun başladılarkən xəta baş verdi",
+  "@startGameError": {
+    "description": "Error when starting the game"
+  },
+  "leaveRoomError": "Otaqdan çıxarkən xəta baş verdi",
+  "@leaveRoomError": {
+    "description": "Error on leave"
+  },
+  "alreadyLiked": "Siz artıq bu oyunçunu bəyənmisiniz.",
+  "@alreadyLiked": {
+    "description": "Error when like is already given"
+  },
+  "likedPlayer": "Siz {playerName} bəyəndiniz!",
+  "@likedPlayer": {
+    "placeholders": {
+        "playerName": {}
+    },
+    "description": "Confirmation after liking a player"
+  },
+  "cannotLikeSelf": "Özünüzü bəyənə bilməzsiniz.",
+  "@cannotLikeSelf": {
+    "description": "Error when cannot like self"
+  },
+  "roleDistribution": "Rolların paylanması",
+  "@roleDistribution": {
+    "description": "Message during role distribution"
+  },
+  "vote": "Səsvermə",
+  "@vote": {
+    "description": "Label for vote phase"
+  },
+  "castVote": "Səs ver",
+  "@castVote": {
+    "description": "Button label to submit vote"
+  },
+  "nightPhaseInfo": "Gecə fasiləsi davam edir...",
+  "@nightPhaseInfo": {
+    "description": "Info text for night phase"
+  },
+  "morningPhaseInfo": "Səhər fasiləsi başlayır...",
+  "@morningPhaseInfo": {
+    "description": "Info text for morning phase"
+  },
+  "maniacWins": "🔪 Dəli qalib gəldi!",
+  "@maniacWins": {
+      "description": "Message when maniac wins"
+  },
+  "playerEliminated": "Oyunçu öldürüldü",
+  "@playerEliminated": {
+      "description": "Message for player eliminated"
+  },
+  "noOneEliminated": "Bu raundda heç kim öldürülmədi.",
+  "@noOneEliminated": {
+      "description": "Message when no one is eliminated"
+  },
+  "allVotes": "Bütün səslər:",
+  "@allVotes": {
+      "description": "Label for all votes list"
+  },
+  "votedFor": "Siz səs verdiniz",
+  "@votedFor": {
+      "description": "Confirmation message for vote"
+  },
+  "actionSubmitted": "Gecə hərəkəti təsdiq edildi",
+  "@actionSubmitted": {
+      "description": "Confirmation message for night action"
+  },
+  "chatError": "Söhbət xətası",
+  "@chatError": {
+      "description": "Error message for chat"
+  },
+  "like": "Bəyən",
+  "@like": {
+      "description": "Button to like a player"
+  },
+  "chooseTarget": "Gecə hərəkəti üçün hədəf seçin:",
+  "@chooseTarget": {
+      "description": "Prompt for choosing a target"
+  },
+  "mafiaAction": "Öldür",
+  "@mafiaAction": {
+      "description": "Mafia's action label"
+  },
+  "mafiaActionHint": "Bu gecə kimin öldürüləcəyini seçin.",
+  "@mafiaActionHint": {
+      "description": "Hint for mafia's action"
+  },
+  "doctorAction": "Müalicə et",
+  "@doctorAction": {
+      "description": "Doctor's action label"
+  },
+  "doctorActionHint": "Bu gecə kimin müalicə ediləcəyini seçin.",
+  "@doctorActionHint": {
+      "description": "Hint for doctor's action"
+  },
+  "detectiveAction": "Yoxla",
+  "@detectiveAction": {
+      "description": "Detective's action label"
+  },
+  "detectiveActionHint": "Bu gecə kimin yoxlanılacağını seçin.",
+  "@detectiveActionHint": {
+      "description": "Hint for detective's action"
+  },
+  "maniacAction": "Dəli qətli",
+  "@maniacAction": {
+      "description": "Maniac's action label"
+  },
+  "maniacActionHint": "Dəli kimi kimin öldürüləcəyini seçin.",
+  "@maniacActionHint": {
+      "description": "Hint for maniac's action"
+  },
+  "lastNightVictim": "Keçən gecənin qurbanı",
+  "@lastNightVictim": {
+      "description": "Label for victim of last night"
+  },
+  "noVictim": "Keçən gecə heç bir qurban yoxdur.",
+  "@noVictim": {
+      "description": "Message if no one was killed last night"
+  },
+  "processingResults": "Nəticələr emal edilir...",
+  "@processingResults": {
+      "description": "Message while processing game results"
+  },
+  "gameOver": "Oyun bitdi!",
+  "@gameOver": {
+      "description": "Message when game ends"
+  },
+  "roomClosed": "Otaq host tərəfindən bağlanıb və ya artıq mövcud deyil.",
+  "@roomClosed": {
+      "description": "Message when room is closed"
+  },
+  "roomError": "Otaq xətası",
+  "@roomError": {
+      "description": "Generic room error message"
+  },
+  "timeLeft": "Qalan vaxt",
+  "@timeLeft": {
+      "description": "Time left in current phase"
+  },
+  "mafiaRole": "Mafiya",
+  "@mafiaRole": {
+    "description": "Mafia role name"
+  },
+  "doctorRole": "Həkim",
+  "@doctorRole": {
+    "description": "Doctor role name"
+  },
+  "detectiveRole": "Detektiv",
+  "@detectiveRole": {
+    "description": "Detective role name"
+  },
+  "maniacRole": "Dəli",
+  "@maniacRole": {
+    "description": "Maniac role name"
+  },
+  "villagerRole": "Kəndli",
+  "@villagerRole": {
+    "description": "Villager role name"
+  },
+  "selectImageSource": "Şəkil mənbəyini seçin",
+  "@selectImageSource": {
+    "description": "Prompt to select image source"
+  },
+  "camera": "Kamera",
+  "@camera": {
+    "description": "Camera option"
+  },
+  "gallery": "Qalereya",
+  "@gallery": {
+    "description": "Gallery option"
+  },
+  "changeAvatar": "Avatarı dəyiş",
+  "@changeAvatar": {
+    "description": "Button to change avatar"
+  },
+  "deleteAvatar": "Avatarı sil",
+  "@deleteAvatar": {
+    "description": "Button to delete avatar"
+  },
+  "avatarUploadSuccess": "Avatar uğurla yükləndi!",
+  "@avatarUploadSuccess": {
+    "description": "Success message for avatar upload"
+  },
+  "avatarUploadError": "Avatar yüklənərkən xəta baş verdi",
+  "@avatarUploadError": {
+    "description": "Error message for avatar upload"
+  },
+  "avatarDeleteSuccess": "Avatar uğurla silindi!",
+  "@avatarDeleteSuccess": {
+    "description": "Success message for avatar deletion"
+  },
+  "avatarDeleteError": "Avatar silinərkən xəta baş verdi",
+  "@avatarDeleteError": {
+    "description": "Error message for avatar deletion"
+  },
+  "country": "Ölkə",
+  "@country": {
+    "description": "Country label"
+  },
+  "roomCodeIs": "Otaq kodunuz:",
+  "@roomCodeIs": {
+    "description": "Label showing the room code to player"
+  },
+  "videoCallTitle": "Video Zəng",
+  "@videoCallTitle": {
+    "description": "Title for video call screen"
+  },
+  "setupUsername": "İstifadəçi Adı Təyin Et",
+  "@setupUsername": {
+    "description": "Title for username setup screen"
+  },
+  "welcomePleaseEnterUsername": "Xoş gəlmisiniz! Başlamaq üçün istədiyiniz istifadəçi adını daxil edin.",
+  "@welcomePleaseEnterUsername": {
+    "description": "Welcome message prompting user to enter username"
+  },
+  "username": "İstifadəçi Adı",
+  "@username": {
+    "description": "Label for username input field"
+  },
+  "saveAndContinue": "Yadda Saxla və Davam Et",
+  "@saveAndContinue": {
+    "description": "Button to save username and proceed"
+  },
+  "usernameCannotBeEmpty": "İstifadəçi adı boş ola bilməz.",
+  "@usernameCannotBeEmpty": {
+    "description": "Error message when username field is empty"
+  },
+  "usernameLengthError": "İstifadəçi adı 3 ilə 20 simvol arasında olmalıdır.",
+  "@usernameLengthError": {
+    "description": "Error message when username length is invalid"
+  },
+  "usernameAlreadyTaken": "Bu istifadəçi adı artıq istifadə olunur. Zəhmət olmasa başqa seçin.",
+  "@usernameAlreadyTaken": {
+    "description": "Error message when username is not available"
+  },
+  "saveUsernameError": "İstifadəçi adını yadda saxlama xətası",
+  "@saveUsernameError": {
+    "description": "Generic error message when username save fails"
+  },
+  "mute": "Səsi kəs",
+  "@mute": {
+    "description": "Səsi kəsmək düyməsi üçün mətn"
+  },
+  "unmute": "Səsi aç",
+  "@unmute": {
+    "description": "Səsi açmaq düyməsi üçün mətn"
+  },
+  "hideVideo": "Videonu gizlət",
+  "@hideVideo": {
+    "description": "Videonu gizlətmək düyməsi üçün mətn"
+  },
+  "showVideo": "Videonu göstər",
+  "@showVideo": {
+    "description": "Videonu göstərmək düyməsi üçün mətn"
+  },
+  "selectLanguageForRoom": "Otaq üçün dil seçin",
+  "@selectLanguageForRoom": {
+    "description": "Otaq üçün dil seçimi"
+  },
+  "roomLanguage": "Otaq dili",
+  "@roomLanguage": {
+    "description": "Cari otağın dili"
+  },
+  "activeRooms": "Aktiv otaqlar",
+  "@activeRooms": {
+    "description": "Aktiv oyun otaqlarının siyahısı"
+  },
+  "noActiveRooms": "Aktiv otaq yoxdur",
+  "@noActiveRooms": {
+    "description": "Aktiv otaq olmadığında mesaj"
+  },
+  "statusWaitingForPlayers": "Oyunçular gözlənilir",
+  "@statusWaitingForPlayers": {
+    "description": "Otaq statusu: oyunçuların qoşulması gözlənilir"
+  },
+  "statusGameStarted": "Oyun başladı",
+  "@statusGameStarted": {
+    "description": "Otaq statusu: oyun yeni başlayıb"
+  },
+  "statusInProgress": "Oyun davam edir",
+  "@statusInProgress": {
+    "description": "Otaq statusu: oyun davam edir"
+  },
+  "statusGameOver": "Oyun bitdi",
+  "@statusGameOver": {
+    "description": "Otaq statusu: oyun başa çatıb"
+  },
+  "statusUnknown": "Naməlum status",
+  "@statusUnknown": {
+    "description": "Naməlum status üçün ehtiyat variant"
+  },
+  "join": "Qoşul",
+  "@join": {
+    "description": "Otağa qoşulma düyməsi"
+  },
+  "host": "Host (Yaradan)",
+  "@host": {
+    "description": "Otaq yaradanı üçün etiket"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Otaq/oyun statusu üçün etiket"
+  },
+  "usernameChangeLimit": "İstifadəçi adı yalnız 24 saatda bir dəfə dəyişdirilə bilər.",
+  "@usernameChangeLimit": {
+    "description": "İstifadəçi adını tez-tez dəyişdirmək cəhdi zamanı mesaj"
+  },
+  "usernameSaved": "İstifadəçi adı uğurla yadda saxlanıldı!",
+  "@usernameSaved": {
+    "description": "İstifadəçi adının yadda saxlanması uğuru mesajı"
+  },
+  "personalSettings": "Şəxsi Parametrlər",
+  "@personalSettings": {
+    "description": "Şəxsi parametrlər bölməsinin başlığı"
+  },
+  "viewEditProfile": "Profilinizə baxın və redaktə edin",
+  "@viewEditProfile": {
+    "description": "Profil redaktə bölməsinin təsviri"
+  },
+  "changeUsername": "İstifadəçi Adını Dəyiş",
+  "@changeUsername": {
+    "description": "İstifadəçi adını dəyişmək üçün düymə mətni"
+  },
+  "save": "Yadda Saxla",
+  "@save": {
+    "description": "Ümumi yadda saxlama düyməsi mətni"
+  },
+  "appSettings": "Tətbiq Parametrləri",
+  "@appSettings": {
+    "description": "Tətbiq parametrləri bölməsinin başlığı"
+  },
+  "darkMode": "Qaranlıq Rejim",
+  "@darkMode": {
+    "description": "Qaranlıq rejim keçid düyməsi"
+  },
+  "supportProject": "Layihəni Dəstəkləyin 💖",
+  "@supportProject": {
+    "description": "Dəstək bölməsinin başlığı"
+  },
+  "supportProjectDescription": "Tətbiqi inkişaf etdirməyimizə kömək edin.",
+  "@supportProjectDescription": {
+    "description": "Dəstək bölməsinin təsviri"
+  },
+  "noGameHistory": "Oyun tarixçəsi tapılmadı.",
+  "@noGameHistory": {
+    "description": "Oyun tarixçəsi olmadıqda göstərilən mesaj"
+  },
+  "none": "Yoxdur",
+  "@none": {
+    "description": "'Yoxdur' dəyəri"
+  },
+  "unknownPlayer": "Naməlum Oyunçu",
+  "@unknownPlayer": {
+    "description": "Naməlum oyunçu üçün tutucu"
+  },
+  "result": "Nəticə",
+  "@result": {
+    "description": "Oyun nəticəsi"
+  },
+  "adminAccessDescription": "İnzibati alətlərə və loqlara giriş.",
+  "@adminAccessDescription": {
+    "description": "Admin girişi təsviri"
+  },
+  "errorLoadingHistory": "Oyun tarixçəsi yüklənərkən xəta baş verdi",
+  "@errorLoadingHistory": {
+    "description": "Oyun tarixçəsi yüklənmədikdə xəta mesajı"
+  }
 }
